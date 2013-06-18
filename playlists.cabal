@@ -1,0 +1,42 @@
+name:          playlists
+version:       0.1.0.0
+synopsis:      Library and executable for working with playlist files.
+license:       BSD3
+license-file:  LICENSE
+author:        Peter Jones
+maintainer:    pjones@devalot.com
+copyright:     Copyright (c) 2013, Peter Jones <pjones@devalot.com>
+category:      Text
+build-type:    Simple
+cabal-version: >=1.8
+-- description:         
+
+--------------------------------------------------------------------------------
+library
+  exposed-modules:
+    Text.Playlist
+  other-modules:
+    Text.Playlist.Types
+    Text.Playlist.PLS.Reader
+    Text.Playlist.Internal.Attoparsec
+
+  hs-source-dirs: src
+  ghc-options: -Wall
+  extensions: OverloadedStrings
+  build-depends: base       >= 4.6   && < 5
+               , attoparsec >= 0.10  && < 0.11
+               , bytestring >= 0.10  && < 0.11
+               , text       >= 0.11  && < 0.12
+               , word8      >= 0.0   && < 0.1
+
+--------------------------------------------------------------------------------
+test-suite spec
+  type: exitcode-stdio-1.0
+  hs-source-dirs: test
+  ghc-options: -Wall -Werror
+  extensions: OverloadedStrings
+  main-is: Main.hs
+  build-depends: base
+               , bytestring
+               , hspec >= 1.4.0 && < 1.5
+               , playlists

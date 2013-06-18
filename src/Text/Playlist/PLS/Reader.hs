@@ -1,0 +1,80 @@
+--------------------------------------------------------------------------------
+module Text.Playlist.PLS.Reader (parsePlaylist) where
+
+--------------------------------------------------------------------------------
+import Control.Applicative
+import Control.Monad (void)
+import Data.Attoparsec.ByteString
+import Data.ByteString (ByteString)
+import Data.Text (Text)
+import Data.Text.Encoding (decodeUtf8)
+import Data.Word8 (isDigit)
+import Text.Playlist.Internal.Attoparsec
+import Text.Playlist.Types
+
+--------------------------------------------------------------------------------
+-- | A parser that will process an entire playlist.
+parsePlaylist :: Parser Playlist
+parsePlaylist = do
+  parseHeader
+  ts <- many1 parseTrack
+  parseFooter
+  return ts
+
+--------------------------------------------------------------------------------
+-- | A pls header will at least contain the "[playlist]" bit but some
+-- files also include the lines you'd expect in the footer too.
+parseHeader :: Parser ()
+parseHeader = do
+  skipSpace >> string "[playlist]" >> skipSpace
+  void (many' skipUnusedLine)
+
+--------------------------------------------------------------------------------
+-- | Parse a single track.  Tracks begin with "FileN" where N is a
+-- digit.  They are followed by an optional title and optional length.
+parseTrack :: Parser Track
+parseTrack = do
+  (n, url) <- parseFileN
+  title    <- (Just <$> parseTitle n) <|> return Nothing
+
+  -- Skip optional length field, we don't use it.
+  (skipSpace >> string "Length" >> skipLine) <|> return ()
+
+  return Track { trackURL   = url
+               , trackTitle = title
+               }
+
+--------------------------------------------------------------------------------
+-- | Skip all footer lines, we don't use them.
+parseFooter :: Parser ()
+parseFooter = void (many' skipUnusedLine)
+
+--------------------------------------------------------------------------------
+-- | Skip any line that isn't part of a track.
+skipUnusedLine :: Parser ()
+skipUnusedLine =
+  (string "numberofentries" <|>
+   string "NumberOfEntries" <|>
+   string "version"         <|>
+   string "Version") >> skipLine
+
+--------------------------------------------------------------------------------
+-- | Parser for the "FileN" line that contains the track number and
+-- URL for the track.  The result is a pair where the first member is
+-- the track number and the second member is the URL.
+parseFileN :: Parser (ByteString, Text)
+parseFileN = do
+  skipSpace
+  n <- string "File" >> takeWhile1 isDigit
+  skipEq
+  url <- takeWhile1 (not . isEOL)
+  return (n, decodeUtf8 url)
+
+--------------------------------------------------------------------------------
+-- | Parser for the title line with the given track number.
+parseTitle :: ByteString -> Parser Text
+parseTitle n = do
+  skipSpace
+  void (string "Title" >> string n)
+  skipEq
+  decodeUtf8 <$> takeWhile1 (not . isEOL)
