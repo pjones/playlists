@@ -18,6 +18,7 @@ library
   other-modules:
     Text.Playlist.Types
     Text.Playlist.PLS.Reader
+    Text.Playlist.PLS.Writer
     Text.Playlist.Internal.Attoparsec
 
   hs-source-dirs: src
