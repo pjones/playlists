@@ -14,4 +14,4 @@ import qualified Text.Playlist.PLS.Reader as PLS
 
 --------------------------------------------------------------------------------
 parsePlaylist :: Format -> ByteString -> Either String Playlist
-parsePlaylist PLS x = Atto.parseOnly PLS.parsePlaylist x
+parsePlaylist PLS = Atto.parseOnly PLS.parsePlaylist
