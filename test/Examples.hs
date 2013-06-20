@@ -10,7 +10,7 @@ the LICENSE file.
 -}
 
 --------------------------------------------------------------------------------
-module Examples (secretAgent, pigRadio) where
+module Examples (secretAgent, pigRadio, utf8Radio) where
 
 --------------------------------------------------------------------------------
 import Text.Playlist
@@ -40,5 +40,13 @@ pigRadio =
 
   , Track { trackURL   = "http://s1.viastreaming.net:7480"
           , trackTitle = Just "Pig Radio - Devoted in Playing the Best Indie Pop/Rock & Electronic. 24/7"
+          }
+  ]
+
+--------------------------------------------------------------------------------
+utf8Radio :: Playlist
+utf8Radio =
+  [ Track { trackURL   = "http://fake.com"
+          , trackTitle = Just "Alle otto i bambini erano già in costume da bagno"
           }
   ]

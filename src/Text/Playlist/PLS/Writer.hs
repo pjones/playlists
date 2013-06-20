@@ -31,7 +31,6 @@ writePlaylist x =
   B.stringUtf8 (show . length $ x)       <>
   B.byteString "\nVersion=2\n"
 
-
 --------------------------------------------------------------------------------
 writeTrack :: (Track, Int) -> Builder
 writeTrack x = writeFileN x <> writeTitle x
