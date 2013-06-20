@@ -24,6 +24,7 @@ import Data.ByteString (ByteString)
 import qualified Data.ByteString.Lazy as BL
 import qualified Data.ByteString.Lazy.Builder as BL
 import qualified Text.Playlist.M3U.Reader as M3U
+import qualified Text.Playlist.M3U.Writer as M3U
 import qualified Text.Playlist.PLS.Reader as PLS
 import qualified Text.Playlist.PLS.Writer as PLS
 import Text.Playlist.Types
@@ -35,5 +36,5 @@ parsePlaylist PLS = Atto.parseOnly PLS.parsePlaylist
 
 --------------------------------------------------------------------------------
 writePlaylist :: Format -> Playlist -> BL.ByteString
-writePlaylist M3U = undefined
+writePlaylist M3U = BL.toLazyByteString . M3U.writePlaylist
 writePlaylist PLS = BL.toLazyByteString . PLS.writePlaylist

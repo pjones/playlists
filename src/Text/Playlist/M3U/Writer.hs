@@ -10,29 +10,31 @@ the LICENSE file.
 -}
 
 --------------------------------------------------------------------------------
-module M3USpec (spec) where
+module Text.Playlist.M3U.Writer (writePlaylist) where
 
 --------------------------------------------------------------------------------
-import Examples (hitParty, aaFile, abFile)
-import Helper (playlistFromFile, roundTrip)
-import Test.Hspec
-import Text.Playlist
+import Data.ByteString.Lazy.Builder (Builder)
+import qualified Data.ByteString.Lazy.Builder as B
+import Data.Monoid
+import Data.Text (Text)
+import Data.Text.Encoding (encodeUtf8)
+import Text.Playlist.Types
 
 --------------------------------------------------------------------------------
-spec :: Spec
-spec = do
-  describe "Parsing" $ do
-    it "HIT Party" $ playlistFromFile' "hp" `shouldReturn` hitParty
-    it "File aa"   $ playlistFromFile' "aa" `shouldReturn` aaFile
-    it "File ab"   $ playlistFromFile' "ab" `shouldReturn` abFile
-  describe "Generating" $ do
-    it "HIT Party" $ roundTrip' hitParty `shouldReturn` hitParty
-    it "File aa"   $ roundTrip' aaFile   `shouldReturn` aaFile
+writePlaylist :: Playlist -> Builder
+writePlaylist x = B.byteString "#EXTM3U\n" <> mconcat (map writeTrack x)
 
 --------------------------------------------------------------------------------
-playlistFromFile' :: FilePath -> IO Playlist
-playlistFromFile' = playlistFromFile M3U
+writeTrack :: Track -> Builder
+writeTrack x =
+  writeTitle (trackTitle x)              <>
+  B.byteString (encodeUtf8 $ trackURL x) <>
+  B.charUtf8 '\n'
 
 --------------------------------------------------------------------------------
-roundTrip' :: Playlist -> IO Playlist
-roundTrip' = roundTrip M3U
+writeTitle :: Maybe Text -> Builder
+writeTitle Nothing  = mempty
+writeTitle (Just x) =
+  B.byteString "#EXTINF:-1,"  <>
+  B.byteString (encodeUtf8 x) <>
+  B.charUtf8 '\n'
