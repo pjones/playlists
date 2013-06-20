@@ -1,6 +1,7 @@
 name:          playlists
 version:       0.1.0.0
 synopsis:      Library and executable for working with playlist files.
+homepage:      https://github.com/pjones/playlists
 license:       BSD3
 license-file:  LICENSE
 author:        Peter Jones <pjones@devalot.com>
