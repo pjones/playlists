@@ -29,7 +29,7 @@ parsePlaylist :: Parser Playlist
 parsePlaylist = do
   parseHeader
   ts <- many1 parseTrack
-  parseFooter
+  skipMany skipUnusedLine
   return ts
 
 --------------------------------------------------------------------------------
@@ -38,7 +38,7 @@ parsePlaylist = do
 parseHeader :: Parser ()
 parseHeader = do
   skipSpace >> string "[playlist]" >> skipSpace
-  void (many' skipUnusedLine)
+  skipMany skipUnusedLine
 
 --------------------------------------------------------------------------------
 -- | Parse a single track.  Tracks begin with "FileN" where N is a
@@ -54,11 +54,6 @@ parseTrack = do
   return Track { trackURL   = url
                , trackTitle = title
                }
-
---------------------------------------------------------------------------------
--- | Skip all footer lines, we don't use them.
-parseFooter :: Parser ()
-parseFooter = void (many' skipUnusedLine)
 
 --------------------------------------------------------------------------------
 -- | Skip any line that isn't part of a track.
