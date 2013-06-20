@@ -10,7 +10,14 @@ the LICENSE file.
 -}
 
 --------------------------------------------------------------------------------
-module Examples (secretAgent, pigRadio, utf8Radio) where
+module Examples
+       ( secretAgent
+       , pigRadio
+       , utf8Radio
+       , hitParty
+       , aaFile
+       , abFile
+       ) where
 
 --------------------------------------------------------------------------------
 import Text.Playlist
@@ -50,3 +57,25 @@ utf8Radio =
           , trackTitle = Just "Alle otto i bambini erano già in costume da bagno"
           }
   ]
+
+--------------------------------------------------------------------------------
+hitParty :: Playlist
+hitParty =
+  [ Track { trackURL   = "http://firewall.hitparty.net:443"
+          , trackTitle = Just "(#1 - Generique) HITPARTY HIT - Pas de pub Que du HIT - Only Hits"
+          }
+  , Track { trackURL   = "http://icecast.pulsradio.com:80/hitpartyHD.mp3.m3u"
+          , trackTitle = Just "(#1 - Generique) HITPARTY HIT - Pas de pub Que du HIT - Only Hits"
+          }
+  ]
+
+--------------------------------------------------------------------------------
+aaFile :: Playlist
+aaFile =
+  [ Track { trackURL = "http://foo.com", trackTitle = Nothing}
+  , Track { trackURL = "http://bar.com", trackTitle = Nothing}
+  ]
+
+--------------------------------------------------------------------------------
+abFile :: Playlist
+abFile = aaFile

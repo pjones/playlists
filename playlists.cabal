@@ -17,6 +17,7 @@ library
     Text.Playlist
   other-modules:
     Text.Playlist.Types
+    Text.Playlist.M3U.Reader
     Text.Playlist.PLS.Reader
     Text.Playlist.PLS.Writer
     Text.Playlist.Internal.Attoparsec

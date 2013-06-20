@@ -23,14 +23,17 @@ import qualified Data.Attoparsec.ByteString as Atto
 import Data.ByteString (ByteString)
 import qualified Data.ByteString.Lazy as BL
 import qualified Data.ByteString.Lazy.Builder as BL
+import qualified Text.Playlist.M3U.Reader as M3U
 import qualified Text.Playlist.PLS.Reader as PLS
 import qualified Text.Playlist.PLS.Writer as PLS
 import Text.Playlist.Types
 
 --------------------------------------------------------------------------------
 parsePlaylist :: Format -> ByteString -> Either String Playlist
+parsePlaylist M3U = Atto.parseOnly M3U.parsePlaylist
 parsePlaylist PLS = Atto.parseOnly PLS.parsePlaylist
 
 --------------------------------------------------------------------------------
 writePlaylist :: Format -> Playlist -> BL.ByteString
+writePlaylist M3U = undefined
 writePlaylist PLS = BL.toLazyByteString . PLS.writePlaylist

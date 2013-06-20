@@ -13,9 +13,8 @@ the LICENSE file.
 module PLSSpec (spec) where
 
 --------------------------------------------------------------------------------
-import qualified Data.ByteString as BS
-import qualified Data.ByteString.Lazy as BL
 import Examples (secretAgent, pigRadio, utf8Radio)
+import Helper (playlistFromFile, roundTrip)
 import Test.Hspec
 import Text.Playlist
 
@@ -23,26 +22,18 @@ import Text.Playlist
 spec :: Spec
 spec = do
   describe "Parsing" $ do
-    it "Secret Agent" $ playlistFromFile "sa"   `shouldReturn` secretAgent
-    it "Pig Radio"    $ playlistFromFile "pig"  `shouldReturn` pigRadio
-    it "UTF8 Radio"   $ playlistFromFile "utf8" `shouldReturn` utf8Radio
+    it "Secret Agent" $ playlistFromFile' "sa"   `shouldReturn` secretAgent
+    it "Pig Radio"    $ playlistFromFile' "pig"  `shouldReturn` pigRadio
+    it "UTF8 Radio"   $ playlistFromFile' "utf8" `shouldReturn` utf8Radio
   describe "Generating" $ do
-    it "Secret Agent" $ roundTrip secretAgent `shouldReturn` secretAgent
-    it "Pig Radio"    $ roundTrip pigRadio    `shouldReturn` pigRadio
-    it "UTF8 Radio"   $ roundTrip utf8Radio   `shouldReturn` utf8Radio
+    it "Secret Agent" $ roundTrip' secretAgent `shouldReturn` secretAgent
+    it "Pig Radio"    $ roundTrip' pigRadio    `shouldReturn` pigRadio
+    it "UTF8 Radio"   $ roundTrip' utf8Radio   `shouldReturn` utf8Radio
 
 --------------------------------------------------------------------------------
-playlistFromFile :: FilePath -> IO Playlist
-playlistFromFile file = do
-    content <- BS.readFile file'
-    case parsePlaylist PLS content of
-      Left err   -> fail $ "failed to parse: " ++ file' ++ ": " ++ err
-      Right plst -> return plst
-  where file' = "test/" ++ file ++ ".pls"
+playlistFromFile' :: FilePath -> IO Playlist
+playlistFromFile' = playlistFromFile PLS
 
 --------------------------------------------------------------------------------
-roundTrip :: Playlist -> IO Playlist
-roundTrip x =
-  case parsePlaylist PLS $ BL.toStrict $ writePlaylist PLS x of
-    Left err    -> fail $ "failed to roundTrip playlist: " ++ err
-    Right plist -> return plist
+roundTrip' :: Playlist -> IO Playlist
+roundTrip' = roundTrip PLS

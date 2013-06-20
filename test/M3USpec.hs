@@ -10,28 +10,22 @@ the LICENSE file.
 -}
 
 --------------------------------------------------------------------------------
-module Text.Playlist.Types
-       ( Track (..)
-       , Playlist
-       , Format (..)
-       ) where
+module M3USpec (spec) where
 
 --------------------------------------------------------------------------------
-import Data.Text (Text)
+import Examples (hitParty, aaFile, abFile)
+import Helper (playlistFromFile) -- , roundTrip)
+import Test.Hspec
+import Text.Playlist
 
 --------------------------------------------------------------------------------
--- | A single music file or streaming URL.
-data Track = Track
-  { trackURL   :: Text       -- ^ URL for a file or streaming resource.
-  , trackTitle :: Maybe Text -- ^ Optional title.
-  } deriving (Show, Eq)
+spec :: Spec
+spec = do
+  describe "Parsing" $ do
+    it "HIT Party" $ playlistFromFile' "hp" `shouldReturn` hitParty
+    it "File aa"   $ playlistFromFile' "aa" `shouldReturn` aaFile
+    it "File ab"   $ playlistFromFile' "ab" `shouldReturn` abFile
 
 --------------------------------------------------------------------------------
--- | A list of 'Track's.
-type Playlist = [Track]
-
---------------------------------------------------------------------------------
--- | Playlist formats.
-data Format = PLS               -- ^ http://en.wikipedia.org/wiki/PLS_(file_format)
-            | M3U               -- ^ http://en.wikipedia.org/wiki/M3U
-              deriving (Show, Eq)
+playlistFromFile' :: FilePath -> IO Playlist
+playlistFromFile' = playlistFromFile M3U

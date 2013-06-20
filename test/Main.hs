@@ -16,9 +16,11 @@ module Main where
 import Test.Hspec
 
 --------------------------------------------------------------------------------
+import qualified M3USpec
 import qualified PLSSpec
 
 --------------------------------------------------------------------------------
 main :: IO ()
 main = hspec $ do
+  describe "M3U" M3USpec.spec
   describe "PLS" PLSSpec.spec
