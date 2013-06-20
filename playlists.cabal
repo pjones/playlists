@@ -43,6 +43,11 @@ flag profiling
   default: False
 
 --------------------------------------------------------------------------------
+source-repository head
+  type:     git
+  location: https://github.com/pjones/playlists.git
+
+--------------------------------------------------------------------------------
 library
   exposed-modules:
     Text.Playlist
@@ -67,13 +72,13 @@ library
 --------------------------------------------------------------------------------
 executable playlist
   main-is: playlist.hs
-  ghc-options: -Wall -Werror -rtsopts 
+  ghc-options: -Wall -rtsopts 
   ghc-prof-options: -fprof-auto-top -fprof-cafs
   extensions: OverloadedStrings
 
   -- Work around a bug in Cabal < 1.16.0.3
-  if flag(profiling)
-    ghc-options: -prof -fprof-auto-top -fprof-cafs
+  -- if flag(profiling)
+  --   ghc-options: -prof -fprof-auto-top -fprof-cafs
 
   build-depends: base
                , bytestring
@@ -85,7 +90,7 @@ executable playlist
 test-suite spec
   type: exitcode-stdio-1.0
   hs-source-dirs: test
-  ghc-options: -Wall -Werror
+  ghc-options: -Wall
   extensions: OverloadedStrings
   main-is: Main.hs
   build-depends: base
