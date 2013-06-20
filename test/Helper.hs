@@ -30,6 +30,6 @@ playlistFromFile fmt file = do
 --------------------------------------------------------------------------------
 roundTrip :: Format -> Playlist -> IO Playlist
 roundTrip fmt plst =
-  case parsePlaylist fmt $ BL.toStrict $ writePlaylist fmt plst of
+  case parsePlaylist fmt $ BL.toStrict $ generatePlaylist fmt plst of
     Left err    -> fail $ "failed to roundTrip playlist: " ++ err
     Right plst' -> return plst'

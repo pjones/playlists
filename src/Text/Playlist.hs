@@ -15,7 +15,7 @@ module Text.Playlist
        , Playlist
        , Format (..)
        , parsePlaylist
-       , writePlaylist
+       , generatePlaylist
        ) where
 
 --------------------------------------------------------------------------------
@@ -35,6 +35,6 @@ parsePlaylist M3U = Atto.parseOnly M3U.parsePlaylist
 parsePlaylist PLS = Atto.parseOnly PLS.parsePlaylist
 
 --------------------------------------------------------------------------------
-writePlaylist :: Format -> Playlist -> BL.ByteString
-writePlaylist M3U = BL.toLazyByteString . M3U.writePlaylist
-writePlaylist PLS = BL.toLazyByteString . PLS.writePlaylist
+generatePlaylist :: Format -> Playlist -> BL.ByteString
+generatePlaylist M3U = BL.toLazyByteString . M3U.writePlaylist
+generatePlaylist PLS = BL.toLazyByteString . PLS.writePlaylist

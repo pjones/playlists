@@ -33,6 +33,15 @@ library
                , word8      >= 0.0   && < 0.1
 
 --------------------------------------------------------------------------------
+executable playlist
+  main-is: playlist.hs
+  build-depends: base
+               , bytestring
+               , optparse-applicative >= 0.5 && < 0.6
+               , playlists
+               , text
+
+--------------------------------------------------------------------------------
 test-suite spec
   type: exitcode-stdio-1.0
   hs-source-dirs: test
