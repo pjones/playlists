@@ -32,6 +32,6 @@ type Playlist = [Track]
 
 --------------------------------------------------------------------------------
 -- | Playlist formats.
-data Format = PLS               -- ^ http://en.wikipedia.org/wiki/PLS_(file_format)
-            | M3U               -- ^ http://en.wikipedia.org/wiki/M3U
+data Format = PLS               -- ^ <http://en.wikipedia.org/wiki/PLS_(file_format)>
+            | M3U               -- ^ M3U and M3U8. <http://en.wikipedia.org/wiki/M3U>
               deriving (Read, Show, Eq)

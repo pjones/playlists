@@ -11,9 +11,12 @@ the LICENSE file.
 
 --------------------------------------------------------------------------------
 module Text.Playlist
-       ( Track (..)
+       ( -- * Playlist Types
+         Track (..)
        , Playlist
+         -- * Playlist Formats
        , Format (..)
+         -- * Parsing and Generating
        , parsePlaylist
        , generatePlaylist
        ) where
@@ -30,11 +33,22 @@ import qualified Text.Playlist.PLS.Writer as PLS
 import Text.Playlist.Types
 
 --------------------------------------------------------------------------------
+-- | Parse a playlist from a @ByteString@.  Parsing may fail in which
+-- case an error message is returned in @Left@.
+--
+-- > content <- BS.getContents
+-- > case parsePlaylist M3U content of
+-- >  Left err -> fail $ "failed to parse playlist: " ++ err
+-- >  Right x  -> return x
 parsePlaylist :: Format -> ByteString -> Either String Playlist
 parsePlaylist M3U = Atto.parseOnly M3U.parsePlaylist
 parsePlaylist PLS = Atto.parseOnly PLS.parsePlaylist
 
 --------------------------------------------------------------------------------
+-- | Generate a lazy @ByteString@ containing playlist data from the
+-- given playlist and in the given format.
+--
+-- > BL.putStr $ generatePlaylist M3U somePlaylist
 generatePlaylist :: Format -> Playlist -> BL.ByteString
 generatePlaylist M3U = BL.toLazyByteString . M3U.writePlaylist
 generatePlaylist PLS = BL.toLazyByteString . PLS.writePlaylist
