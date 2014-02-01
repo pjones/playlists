@@ -25,10 +25,10 @@ import Text.Playlist.Types
 --------------------------------------------------------------------------------
 writePlaylist :: Playlist -> Builder
 writePlaylist x =
-  B.byteString "[playlist]\n"            <>
-  mconcat (map writeTrack $ zip x [1..]) <>
-  B.byteString "NumberOfEntries="        <>
-  B.stringUtf8 (show . length $ x)       <>
+  B.byteString "[playlist]\n"                  <>
+  mconcat (zipWith (curry writeTrack) x [1..]) <>
+  B.byteString "NumberOfEntries="              <>
+  B.stringUtf8 (show . length $ x)             <>
   B.byteString "\nVersion=2\n"
 
 --------------------------------------------------------------------------------
