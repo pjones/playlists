@@ -1,12 +1,12 @@
 name:          playlists
-version:       0.1.0.0
+version:       0.2.0.0
 synopsis:      Library and executable for working with playlist files.
 homepage:      https://github.com/pjones/playlists
 license:       BSD3
 license-file:  LICENSE
 author:        Peter Jones <pjones@devalot.com>
 maintainer:    Peter Jones <pjones@devalot.com>
-copyright:     Copyright (c) 2013 Peter Jones <pjones@devalot.com>
+copyright:     Copyright (c) 2013,2014 Peter Jones <pjones@devalot.com>
 category:      Text
 build-type:    Simple
 cabal-version: >=1.8
@@ -37,9 +37,8 @@ description:
   > $ playlist convert --from PLS --to M3U < somefile.pls
 
 --------------------------------------------------------------------------------
--- Work around a bug in Cabal < 1.16.0.3.
-flag profiling
-  description: Build with executable profiling enabled
+flag maintainer
+  description: Enable settings for the package maintainer.
   default: False
 
 --------------------------------------------------------------------------------
@@ -75,10 +74,6 @@ executable playlist
   ghc-options: -Wall -rtsopts 
   ghc-prof-options: -fprof-auto-top -fprof-cafs
   extensions: OverloadedStrings
-
-  -- Work around a bug in Cabal < 1.16.0.3
-  -- if flag(profiling)
-  --   ghc-options: -prof -fprof-auto-top -fprof-cafs
 
   build-depends: base
                , bytestring
