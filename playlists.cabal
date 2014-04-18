@@ -63,12 +63,14 @@ flag maintainer
 ------------------------------------------------------------------------------
 -- You can disable the hlint test suite with -f-test-hlint
 flag test-hlint
+  description: Run the source code through hlint when testing.
   default: True
   manual: True
 
 ------------------------------------------------------------------------------
 -- You can disable the doctest test suite with -f-test-doctest
 flag test-doctest
+  description: Run the source code through doctest when testing.
   default: True
   manual: True
 
