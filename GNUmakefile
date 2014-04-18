@@ -14,7 +14,7 @@ all: $(SANDBOX)
 
 ################################################################################
 test::
-	cabal install --enable-tests -fmaintainer
+	cabal install --enable-tests -fmaintainer -f-test-hlint
 
 ################################################################################
 clean::

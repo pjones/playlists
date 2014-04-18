@@ -14,6 +14,8 @@ the LICENSE file.
 module Main (main) where
 
 --------------------------------------------------------------------------------
+import Control.Applicative
+import System.Environment
 import Test.DocTest
 
 --------------------------------------------------------------------------------
@@ -31,4 +33,4 @@ flags = ["-isrc", "-XOverloadedStrings"]
 --------------------------------------------------------------------------------
 -- | Check the docs.
 main :: IO ()
-main = doctest =<< fmap (flags ++) files
+main = doctest =<< (++) <$> getArgs <*> fmap (flags ++) files
