@@ -6,7 +6,7 @@ license:       BSD3
 license-file:  LICENSE
 author:        Peter Jones <pjones@devalot.com>
 maintainer:    Peter Jones <pjones@devalot.com>
-copyright:     Copyright (c) 2013,2014 Peter Jones <pjones@devalot.com>
+copyright:     Copyright (c) 2013,2014 Peter Jones
 category:      Text
 build-type:    Simple
 cabal-version: >=1.8
