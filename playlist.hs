@@ -26,13 +26,13 @@ data Command = CmdURLs Format | CmdConvert Format Format
 --------------------------------------------------------------------------------
 urlCommandOptions :: Parser Command
 urlCommandOptions = CmdURLs
-  <$> option (short 'f' <> long "format" <> metavar "FORMAT" <> help "Input format")
+  <$> option auto (short 'f' <> long "format" <> metavar "FORMAT" <> help "Input format")
 
 --------------------------------------------------------------------------------
 convertCommandOptions :: Parser Command
 convertCommandOptions = CmdConvert
-  <$> option (short 'f' <> long "from" <> metavar "FORMAT" <> help "Input format")
-  <*> option (short 't' <> long "to"   <> metavar "FORMAT" <> help "Output format")
+  <$> option auto (short 'f' <> long "from" <> metavar "FORMAT" <> help "Input format")
+  <*> option auto (short 't' <> long "to"   <> metavar "FORMAT" <> help "Output format")
 
 --------------------------------------------------------------------------------
 commands :: Parser Command
