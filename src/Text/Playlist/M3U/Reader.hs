@@ -69,4 +69,4 @@ commentOrTitle = do
                  skipSpace
                  text <- decodeUtf8 <$> takeWhile1 (not . isEOL)
                  skipSpace
-                 return $! Just text
+                 return (Just text)
