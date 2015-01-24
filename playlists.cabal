@@ -1,5 +1,5 @@
 name:          playlists
-version:       0.2.0.0
+version:       0.3.0.0
 synopsis:      Library and executable for working with playlist files.
 homepage:      https://github.com/pjones/playlists
 license:       BSD3
@@ -39,16 +39,8 @@ description:
 --------------------------------------------------------------------------------
 extra-source-files:
   README.md
-  test/aa.m3u
-  test/ab.m3u
-  test/Examples.hs
-  test/Helper.hs
-  test/hp.m3u
-  test/M3USpec.hs
-  test/pig.pls
-  test/PLSSpec.hs
-  test/sa.pls
-  test/utf8.pls
+  CHANGELOG
+  test/*
 
 --------------------------------------------------------------------------------
 source-repository head
@@ -103,6 +95,7 @@ library
 
 --------------------------------------------------------------------------------
 executable playlist
+  hs-source-dirs: ./
   main-is: playlist.hs
   ghc-options: -Wall -rtsopts 
   ghc-prof-options: -fprof-auto-top -fprof-cafs
@@ -121,9 +114,9 @@ executable playlist
 test-suite spec
   type: exitcode-stdio-1.0
   hs-source-dirs: test
+  main-is: Main.hs
   ghc-options: -Wall
   extensions: OverloadedStrings
-  main-is: Main.hs
   build-depends: base
                , bytestring
                , hspec >= 1.4.0
@@ -132,9 +125,9 @@ test-suite spec
 ------------------------------------------------------------------------------
 test-suite hlint
   type: exitcode-stdio-1.0
+  hs-source-dirs: test
   main-is: hlint.hs
   ghc-options: -w
-  hs-source-dirs: test
 
   if !flag(test-hlint)
     buildable: False
@@ -146,8 +139,8 @@ test-suite hlint
 test-suite doctests
   type: exitcode-stdio-1.0
   ghc-options: -threaded
-  main-is: doctest.hs
   hs-source-dirs: test
+  main-is: doctest.hs
 
   if !flag(test-doctest)
     buildable: False

@@ -1,20 +1,24 @@
 ################################################################################
-# A stupid Makefile that doesn't do much.
-.PHONEY: all test clean prof
+.PHONEY: all
 
 ################################################################################
-SANDBOX = .cabal-sandbox
+# Set up the default target.
+all::
+
+################################################################################
+# Ask `git' to update the submodule and make haskell.mk available.
+util/haskell.mk:
+	git submodule update --init
+
+################################################################################
+# From util/haskell.mk (git submodule update --init)
+CABAL_FLAGS = --enable-tests -fmaintainer
+include util/haskell.mk
+
+################################################################################
 TOOL = $(SANDBOX)/bin/playlist
 RTS_OPS = +RTS -sstderr -hc -pa -xc
 PROF_LOOPS = 1000
-
-################################################################################
-all: $(SANDBOX)
-	cabal install -fmaintainer
-
-################################################################################
-test::
-	cabal install --enable-tests -fmaintainer -f-test-hlint
 
 ################################################################################
 clean::
@@ -23,7 +27,7 @@ clean::
 	rm -f playlist-m3u.*
 
 ################################################################################
-prof:
+prof::
 	rm -rf dist
 	cabal install --enable-library-profiling \
 	  --enable-executable-profiling \
@@ -42,7 +46,3 @@ prof:
 	mv playlist.hp playlist-m3u.hp
 	hp2ps -M -b -c playlist-m3u.hp
 	ps2pdf playlist-m3u.ps
-
-################################################################################
-$(SANDBOX):
-	cabal sandbox init
