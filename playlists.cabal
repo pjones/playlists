@@ -40,7 +40,9 @@ description:
 extra-source-files:
   README.md
   CHANGELOG
-  test/*
+  test/*.m3u
+  test/*.pls
+  test/*.hs
 
 --------------------------------------------------------------------------------
 source-repository head
@@ -51,6 +53,7 @@ source-repository head
 flag maintainer
   description: Enable settings for the package maintainer.
   default: False
+  manual: True
 
 ------------------------------------------------------------------------------
 -- You can disable the hlint test suite with -f-test-hlint
