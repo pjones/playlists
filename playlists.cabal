@@ -111,7 +111,7 @@ executable playlist
 
   build-depends: base
                , bytestring
-               , optparse-applicative >= 0.10.0 && < 0.12.0
+               , optparse-applicative >= 0.10.0 && < 0.13.0
                , playlists
                , text
 
