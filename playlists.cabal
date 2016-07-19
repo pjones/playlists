@@ -1,16 +1,16 @@
 name:          playlists
-version:       0.3.0.0
+version:       0.3.1.0
 synopsis:      Library and executable for working with playlist files.
 homepage:      https://github.com/pjones/playlists
 license:       BSD3
 license-file:  LICENSE
 author:        Peter Jones <pjones@devalot.com>
 maintainer:    Peter Jones <pjones@devalot.com>
-copyright:     Copyright (c) 2013,2014 Peter Jones
+copyright:     Copyright (c) 2013-2016 Peter Jones
 category:      Text
 build-type:    Simple
 cabal-version: >=1.8
-description: 
+description:
   Playlists is a library for working with media playlist files.  The
   original motivation for the library was extracting URLs for
   streaming radio stations that use PLS and M3U playlist files.
@@ -22,7 +22,7 @@ description:
   .
   > import qualified Data.ByteString as BS
   > import Text.Playlist
-  > 
+  >
   > readPlaylist :: Format -> IO Playlist
   > readPlaylist fmt = do
   >   content <- BS.getContents
@@ -100,7 +100,7 @@ library
 executable playlist
   hs-source-dirs: ./
   main-is: playlist.hs
-  ghc-options: -Wall -rtsopts 
+  ghc-options: -Wall -rtsopts
   ghc-prof-options: -fprof-auto-top -fprof-cafs
   extensions: OverloadedStrings
 
@@ -109,7 +109,7 @@ executable playlist
 
   build-depends: base
                , bytestring
-               , optparse-applicative >= 0.10.0 && < 0.12.0
+               , optparse-applicative >= 0.10.0 && < 0.13.0
                , playlists
                , text
 
