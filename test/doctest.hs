@@ -21,14 +21,14 @@ import Test.DocTest
 --------------------------------------------------------------------------------
 -- Totally stupid right now.  Will search the directory later.
 files :: IO [String]
-files = fmap ("playlist.hs" :) files' where
+files = fmap ("util/playlist.hs" :) files' where
   files' = return ["src/Text/Playlist.hs"]
 
 --------------------------------------------------------------------------------
 -- | GHC flags needed by doctest.  Would be better to fetch these from
 -- cabal directly though.
 flags :: [String]
-flags = ["-isrc", "-XOverloadedStrings"]
+flags = ["-isrc"]
 
 --------------------------------------------------------------------------------
 -- | Check the docs.

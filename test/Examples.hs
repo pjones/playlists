@@ -1,3 +1,5 @@
+{-# LANGUAGE OverloadedStrings #-}
+
 {-
 
 This file is part of the Haskell package playlists. It is subject to
