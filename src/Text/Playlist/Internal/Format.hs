@@ -28,6 +28,9 @@ import Text.Playlist.Types
 -- >>> fileNameToFormat "foo.m3u"
 -- Just M3U
 --
+-- >>> fileNameToFormat "foo.M3U"
+-- Just M3U
+--
 -- >>> fileNameToFormat "foo.txt"
 -- Nothing
 fileNameToFormat :: FilePath -> Maybe Format
