@@ -18,9 +18,11 @@ import Test.Hspec
 --------------------------------------------------------------------------------
 import qualified M3USpec
 import qualified PLSSpec
+import qualified ResolveSpec
 
 --------------------------------------------------------------------------------
 main :: IO ()
 main = hspec $ do
-  describe "M3U" M3USpec.spec
-  describe "PLS" PLSSpec.spec
+  describe "M3U"     M3USpec.spec
+  describe "PLS"     PLSSpec.spec
+  describe "Resolve" ResolveSpec.spec

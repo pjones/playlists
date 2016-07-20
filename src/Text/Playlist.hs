@@ -25,9 +25,11 @@ module Text.Playlist
          -- * Utility Functions
        , fileNameToFormat
        , appendExtension
+       , resolve
        ) where
 
 --------------------------------------------------------------------------------
 import Text.Playlist.Internal.Format
 import Text.Playlist.Internal.ReadWrite
 import Text.Playlist.Types
+import Text.Playlist.Internal.Resolve

@@ -42,7 +42,6 @@ extra-source-files:
   CHANGES.md
   test/*.m3u
   test/*.pls
-  test/*.hs
 
 --------------------------------------------------------------------------------
 source-repository head
@@ -70,6 +69,7 @@ library
     Text.Playlist.Internal.Attoparsec
     Text.Playlist.Internal.Format
     Text.Playlist.Internal.ReadWrite
+    Text.Playlist.Internal.Resolve
     Text.Playlist.M3U.Reader
     Text.Playlist.M3U.Writer
     Text.Playlist.PLS.Reader
@@ -120,14 +120,17 @@ test-suite spec
     Helper
     M3USpec
     PLSSpec
+    ResolveSpec
 
   if flag(maintainer)
     ghc-options: -Werror
 
   build-depends: base
                , bytestring
+               , filepath
                , hspec >= 1.4.0
                , playlists
+               , text
 
 ------------------------------------------------------------------------------
 test-suite doctests
