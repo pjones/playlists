@@ -16,6 +16,7 @@ module Text.Playlist.Internal.Format
        ) where
 
 --------------------------------------------------------------------------------
+import Data.Char (toLower)
 import System.FilePath (takeExtension)
 
 --------------------------------------------------------------------------------
@@ -30,7 +31,7 @@ import Text.Playlist.Types
 -- >>> fileNameToFormat "foo.txt"
 -- Nothing
 fileNameToFormat :: FilePath -> Maybe Format
-fileNameToFormat ext = case takeExtension ext of
+fileNameToFormat ext = case map toLower $ takeExtension ext of
   ".m3u"  -> Just M3U
   ".m3u8" -> Just M3U
   ".pls"  -> Just PLS
