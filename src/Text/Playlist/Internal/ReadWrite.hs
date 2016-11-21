@@ -11,7 +11,8 @@ the LICENSE file.
 
 --------------------------------------------------------------------------------
 module Text.Playlist.Internal.ReadWrite
-       ( parsePlaylist
+       ( parserForFormat
+       , parsePlaylist
        , generatePlaylist
        ) where
 
@@ -29,6 +30,12 @@ import qualified Text.Playlist.PLS.Writer as PLS
 import Text.Playlist.Types
 
 --------------------------------------------------------------------------------
+-- | Return the appropriate attoparsec parser for the given playlist format.
+parserForFormat :: Format -> Atto.Parser Playlist
+parserForFormat M3U = M3U.parsePlaylist
+parserForFormat PLS = PLS.parsePlaylist
+
+--------------------------------------------------------------------------------
 -- | Parse a playlist from a @ByteString@.  Parsing may fail in which
 -- case an error message is returned in @Left@.
 --
@@ -37,8 +44,7 @@ import Text.Playlist.Types
 -- >  Left err -> fail $ "failed to parse playlist: " ++ err
 -- >  Right x  -> return x
 parsePlaylist :: Format -> ByteString -> Either String Playlist
-parsePlaylist M3U = Atto.parseOnly M3U.parsePlaylist
-parsePlaylist PLS = Atto.parseOnly PLS.parsePlaylist
+parsePlaylist f = Atto.parseOnly (parserForFormat f)
 
 --------------------------------------------------------------------------------
 -- | Generate a lazy @ByteString@ containing playlist data from the

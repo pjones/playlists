@@ -20,13 +20,11 @@ module Text.Playlist.Internal.Resolve
 
 --------------------------------------------------------------------------------
 import Control.Monad
-import Data.ByteString (ByteString)
 import Data.Text (Text)
 import qualified Data.Text as Text
 
 --------------------------------------------------------------------------------
 import Text.Playlist.Internal.Format
-import Text.Playlist.Internal.ReadWrite
 import Text.Playlist.Types
 
 --------------------------------------------------------------------------------
@@ -62,9 +60,9 @@ resolve :: forall m. (Monad m)
         -- ^ A 'Playlist' that may contain references to other
         -- playlists.
 
-        -> (Text -> m ByteString)
+        -> (Text -> m Playlist)
         -- ^ Downloading function.  This function should take a URL
-        -- and return the body of the document found at that URL.
+        -- and return a parsed playlist.
         --
         -- It's expected that the URL points to another playlist that
         -- needs to be parsed and possibly resolved.
@@ -93,14 +91,4 @@ resolve playlist download = go 10 playlist where
   process t@Track {..} =
     case fileNameToFormat (Text.unpack trackURL) of
       Nothing -> return (Flat [t])
-      Just f  -> Again <$> parse f trackURL
-
-  ----------------------------------------------------------------------------
-  -- Helper function to download and parse a remote playlist.
-  parse :: (Monad m) => Format -> Text -> m Playlist
-  parse format url = do
-    raw <- download url
-
-    case parsePlaylist format raw of
-      Left _      -> return []
-      Right plist -> return plist
+      Just _  -> Again <$> download trackURL

@@ -15,10 +15,10 @@ the LICENSE file.
 module ResolveSpec (spec) where
 
 --------------------------------------------------------------------------------
-import qualified Data.ByteString as ByteString
+import Data.Text (Text)
 import qualified Data.Text as Text
 import Helper (playlistFromFile)
-import System.FilePath (takeFileName)
+import System.FilePath (dropExtension, takeFileName)
 import Test.Hspec
 
 --------------------------------------------------------------------------------
@@ -26,7 +26,7 @@ import Text.Playlist
 
 --------------------------------------------------------------------------------
 spec :: Spec
-spec = do
+spec =
   describe "Simple" $
     it "Nested" $ loadAndResolve M3U "nested" `shouldReturn` resolved
 
@@ -36,8 +36,9 @@ loadAndResolve format file = do
     playlist <- playlistFromFile format file
     resolve playlist download
   where
-    download url = ByteString.readFile (path url)
-    path url     = "test/" ++ (takeFileName $ Text.unpack url)
+    download :: Text -> IO Playlist
+    download = playlistFromFile format . dropExtension .
+               takeFileName . Text.unpack
 
 --------------------------------------------------------------------------------
 resolved :: Playlist

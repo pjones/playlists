@@ -20,6 +20,7 @@ module Text.Playlist
 
          -- * Parsing and Generating
        , parsePlaylist
+       , parserForFormat
        , generatePlaylist
 
          -- * Utility Functions
