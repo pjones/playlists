@@ -1,2 +1,5 @@
 /.stack-work
 /build/.stack-work
+/cabal.project.local
+/default.nix
+/dist-newstyle/

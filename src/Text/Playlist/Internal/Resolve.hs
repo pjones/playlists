@@ -75,7 +75,7 @@ resolve playlist download = go 10 playlist where
   ----------------------------------------------------------------------------
   -- Recursively process tracks in the 'Playlist' with a maximum depth
   -- of @n@.
-  go :: (Monad m) => Int -> Playlist -> m Playlist
+  go :: Int -> Playlist -> m Playlist
   go _ [] = return []
   go 0 xs = return xs
   go n xs = fmap join $ forM xs $ \track -> do

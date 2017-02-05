@@ -1,3 +1,9 @@
+# Version 0.4.1.0 (February 5, 2017)
+
+  * Remove redundant constraints as reported by GHC 8.X.
+
+  * Widen dependency versions to latest available.
+
 # Version 0.4.0.0 (November 21, 2016)
 
   * Added the `resolve` function.  If you have a playlist that
