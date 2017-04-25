@@ -1,3 +1,7 @@
+# Next Version
+
+  * Add support for track length (thanks to Catherine Galkina)
+
 # Version 0.4.1.0 (February 5, 2017)
 
   * Remove redundant constraints as reported by GHC 8.X.
