@@ -1,4 +1,5 @@
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE RecordWildCards #-}
 
 {-
 
@@ -19,6 +20,7 @@ import Data.ByteString.Lazy.Builder (Builder)
 import qualified Data.ByteString.Lazy.Builder as B
 import Data.Monoid
 import Data.Text (Text)
+import qualified Data.Text as T
 import Data.Text.Encoding (encodeUtf8)
 import Text.Playlist.Types
 
@@ -29,14 +31,27 @@ writePlaylist x = B.byteString "#EXTM3U\n" <> mconcat (map writeTrack x)
 --------------------------------------------------------------------------------
 writeTrack :: Track -> Builder
 writeTrack x =
-  writeTitle (trackTitle x)              <>
+  writeTitleAndLength x <>
   B.byteString (encodeUtf8 $ trackURL x) <>
   B.charUtf8 '\n'
 
 --------------------------------------------------------------------------------
-writeTitle :: Maybe Text -> Builder
-writeTitle Nothing  = mempty
-writeTitle (Just x) =
-  B.byteString "#EXTINF:-1,"  <>
-  B.byteString (encodeUtf8 x) <>
+writeTitleAndLength :: Track -> Builder
+writeTitleAndLength (Track _ Nothing Nothing) = mempty
+writeTitleAndLength Track{..} =
+  B.byteString "#EXTINF:"   <>
+  writeLength trackDuration <>
+  B.byteString ","          <>
+  writeTitle trackTitle     <>
   B.charUtf8 '\n'
+
+--------------------------------------------------------------------------------
+writeLength :: Maybe Float -> Builder
+writeLength Nothing = mempty
+writeLength (Just l) = B.byteString . encodeUtf8 . T.pack . show $ l
+
+--------------------------------------------------------------------------------
+writeTitle :: Maybe Text -> Builder
+writeTitle Nothing = mempty
+writeTitle (Just x) = B.byteString (encodeUtf8 x)
+
