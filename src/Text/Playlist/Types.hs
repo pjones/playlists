@@ -22,8 +22,9 @@ import Data.Text (Text)
 --------------------------------------------------------------------------------
 -- | A single music file or streaming URL.
 data Track = Track
-  { trackURL   :: Text       -- ^ URL for a file or streaming resource.
-  , trackTitle :: Maybe Text -- ^ Optional title.
+  { trackURL      :: Text        -- ^ URL for a file or streaming resource.
+  , trackTitle    :: Maybe Text  -- ^ Optional title.
+  , trackDuration :: Maybe Float -- ^ Optional duration in seconds.
   } deriving (Show, Eq)
 
 --------------------------------------------------------------------------------
