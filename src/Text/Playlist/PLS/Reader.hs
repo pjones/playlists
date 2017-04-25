@@ -18,6 +18,7 @@ module Text.Playlist.PLS.Reader (parsePlaylist) where
 import Control.Applicative
 import Control.Monad (void)
 import Data.Attoparsec.ByteString
+import Data.Attoparsec.ByteString.Char8 (signed, double)
 import Data.ByteString (ByteString)
 import Data.Text (Text)
 import Data.Text.Encoding (decodeUtf8)
@@ -50,11 +51,13 @@ parseTrack = do
   (n, url) <- parseFileN
   title    <- (Just <$> parseTitle n) <|> return Nothing
 
-  -- Skip optional length field, we don't use it.
-  (skipSpace >> string "Length" >> skipLine) <|> return ()
+  -- Parse track length.
+  mlen <- (Just . realToFrac <$> (skipSpace >> string "Length" >> skipWhile isDigit >> string "=" >> signed double))
+      <|> return Nothing
 
-  return Track { trackURL   = url
-               , trackTitle = title
+  return Track { trackURL      = url
+               , trackTitle    = title
+               , trackDuration = mlen
                }
 
 --------------------------------------------------------------------------------

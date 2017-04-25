@@ -35,7 +35,7 @@ writePlaylist x =
 
 --------------------------------------------------------------------------------
 writeTrack :: (Track, Int) -> Builder
-writeTrack x = writeFileN x <> writeTitle x
+writeTrack x = writeFileN x <> writeTitle x <> writeLength x
 
 --------------------------------------------------------------------------------
 writeFileN :: (Track, Int) -> Builder
@@ -56,3 +56,15 @@ writeTitle (x, n) =
                B.charUtf8 '='              <>
                B.byteString (encodeUtf8 y) <>
                B.charUtf8 '\n'
+
+--------------------------------------------------------------------------------
+writeLength :: (Track, Int) -> Builder
+writeLength (x, n) =
+  case trackDuration x of
+    Nothing -> mempty
+    Just l  -> B.byteString "Length" <>
+               B.stringUtf8 (show n) <>
+               B.charUtf8 '='        <>
+               B.stringUtf8 (show l) <>
+               B.charUtf8 '\n'
+

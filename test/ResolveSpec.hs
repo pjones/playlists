@@ -42,7 +42,7 @@ loadAndResolve format file = do
 
 --------------------------------------------------------------------------------
 resolved :: Playlist
-resolved = [ Track "http://foo.com"             Nothing
-           , Track "http://bar.com"             Nothing
-           , Track "http://foo.com/aa.baz.live" Nothing
+resolved = [ Track "http://foo.com"             Nothing Nothing
+           , Track "http://bar.com"             Nothing Nothing
+           , Track "http://foo.com/aa.baz.live" Nothing Nothing
            ]
