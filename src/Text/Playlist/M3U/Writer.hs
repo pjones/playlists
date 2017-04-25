@@ -20,7 +20,6 @@ import Data.ByteString.Lazy.Builder (Builder)
 import qualified Data.ByteString.Lazy.Builder as B
 import Data.Monoid
 import Data.Text (Text)
-import qualified Data.Text as T
 import Data.Text.Encoding (encodeUtf8)
 import Text.Playlist.Types
 
@@ -48,7 +47,7 @@ writeTitleAndLength Track{..} =
 --------------------------------------------------------------------------------
 writeLength :: Maybe Float -> Builder
 writeLength Nothing = mempty
-writeLength (Just l) = B.byteString . encodeUtf8 . T.pack . show $ l
+writeLength (Just l) = B.stringUtf8 (show l)
 
 --------------------------------------------------------------------------------
 writeTitle :: Maybe Text -> Builder

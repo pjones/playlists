@@ -21,7 +21,6 @@ module Text.Playlist.PLS.Writer
 import Data.ByteString.Lazy.Builder (Builder)
 import qualified Data.ByteString.Lazy.Builder as B
 import Data.Monoid
-import qualified Data.Text as T
 import Data.Text.Encoding (encodeUtf8)
 import Text.Playlist.Types
 
@@ -63,10 +62,9 @@ writeLength :: (Track, Int) -> Builder
 writeLength (x, n) =
   case trackDuration x of
     Nothing -> mempty
-    Just l  -> B.byteString "Length"                <>
-               B.stringUtf8 (show n)                <>
-               B.charUtf8 '='                       <>
-               B.byteString (encodeUtf8 (toText l)) <>
+    Just l  -> B.byteString "Length" <>
+               B.stringUtf8 (show n) <>
+               B.charUtf8 '='        <>
+               B.stringUtf8 (show l) <>
                B.charUtf8 '\n'
-  where
-    toText = T.pack . show
+
