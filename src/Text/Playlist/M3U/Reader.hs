@@ -73,8 +73,7 @@ commentOrDirective = do
       directive = do
         mlen <- (Just . realToFrac <$> signed double) <|> return Nothing -- Parse length.
         skip (== 44)                                                     -- Skip comma.
-        skipSpace
-        text <- decodeUtf8 <$> takeWhile1 (not . isEOL)
-        skipSpace
-        return (Just (Just text, mlen))
+        mtext <- (Just . decodeUtf8 <$> takeWhile1 (not . isEOL)) <|> (return Nothing)
+        skipLine
+        return (Just (mtext, mlen))
 
