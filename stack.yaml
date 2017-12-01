@@ -1,7 +1,11 @@
-resolver: lts-8.12
+resolver: lts-9.14
 
 packages:
 - ./
+
+nix:
+  enable: false
+  shell-file: stack.nix
 
 flags:
   playlists:

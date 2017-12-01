@@ -1,6 +1,8 @@
-# Next Version
+# Version 0.5.0.0 (December 1, 2017)
 
   * Add support for track length (thanks to Catherine Galkina)
+
+  * Widen dependency versions to latest available.
 
 # Version 0.4.1.0 (February 5, 2017)
 
