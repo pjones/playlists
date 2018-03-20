@@ -6,11 +6,11 @@ license:       BSD3
 license-file:  LICENSE
 author:        Peter Jones <pjones@devalot.com>
 maintainer:    Peter Jones <pjones@devalot.com>
-copyright:     Copyright (c) 2013-2016 Peter Jones
+copyright:     Copyright (c) 2013-2018 Peter Jones
 category:      Text
 build-type:    Simple
-cabal-version: >= 1.18
-tested-with:   GHC==7.10.3, GHC==8.0.2
+cabal-version: 1.18
+tested-with:   GHC == 7.10.3, GHC == 8.0.2, GHC == 8.2.2, GHC == 8.4.1
 description:
   Playlists is a library for working with media playlist files.  The
   original motivation for the library was extracting URLs for
