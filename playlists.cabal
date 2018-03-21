@@ -59,7 +59,7 @@ flag maintainer
 -- You can disable the doctest test suite with -f-test-doctest
 flag test-doctest
   description: Run the source code through doctest when testing.
-  default: True
+  default: False
   manual: True
 
 --------------------------------------------------------------------------------
