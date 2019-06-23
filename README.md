@@ -1,4 +1,4 @@
-Haskell Playlists Library and Tool [![Travis][travis-shield]][travis]
+Haskell Playlists Library and Tool
 ==================================
 
 Playlists is a library for working with media playlist files.  The
@@ -11,28 +11,30 @@ playlist file and convert between playlist file formats.
 Supported Formats
 -----------------
 
-  * [PLS] []
-  * [M3U and M3U8] [M3U]
+  * [PLS][]
+  * [M3U and M3U8][M3U]
 
 Future Plans
 ------------
 
 Some playlist files can be really big.  I plan on adding support for
-incremental parsing and generating via [io-streams] [] at some point
-in the future.
+incremental parsing and generating via `pipes` at some point in the
+future.
 
 Library Example
 ---------------
 
-    import qualified Data.ByteString as BS
-    import Text.Playlist
+```haskell
+import qualified Data.ByteString as BS
+import Text.Playlist
 
-    readPlaylist :: Format -> IO Playlist
-    readPlaylist fmt = do
-      content <- BS.getContents
-      case parsePlaylist fmt content of
-        Left err -> fail $ "failed to parse playlist on stdin: " ++ err
-        Right x  -> return x
+readPlaylist :: Format -> IO Playlist
+readPlaylist fmt = do
+  content <- BS.getContents
+  case parsePlaylist fmt content of
+    Left err -> fail $ "failed to parse playlist on stdin: " ++ err
+    Right x  -> return x
+```
 
 
 Executable Example
@@ -44,7 +46,3 @@ Executable Example
 
 [pls]: http://en.wikipedia.org/wiki/PLS_(file_format)
 [m3u]: http://en.wikipedia.org/wiki/M3U
-[io-streams]: http://hackage.haskell.org/package/io-streams
-
-[travis]: https://travis-ci.org/pjones/playlists
-[travis-shield]: https://travis-ci.org/pjones/playlists.svg?branch=master
