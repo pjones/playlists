@@ -1,20 +1,15 @@
-{ pkgs ? (import <nixpkgs> {}).pkgs }:
+{ pkgs ? import <nixpkgs> { }
+}:
 
 let
-  # List any extra packages you want available while your package is
-  # building or while in a nix shell:
-  extraPackages = with pkgs; [ ];
+  nix-hs-src = fetchGit {
+    url = "https://code.devalot.com/open/nix-hs.git";
+    rev = "2003332a1e8e518b54e6143f9a9467a8a05abca4";
+  };
 
-  # Helpful if you want to override any Haskell packages:
-  haskell = pkgs.haskellPackages;
-in
+  nix-hs = import "${nix-hs-src}/default.nix" { inherit pkgs; };
 
-# Load the local nix file and use the overrides from above:
-haskell.callPackage ./playlists.nix {
-  mkDerivation = { buildTools ? []
-                 , ...
-                 }@args:
-    haskell.mkDerivation (args // {
-      buildTools = buildTools ++ extraPackages;
-    });
+in nix-hs {
+  cabal = ./playlists.cabal;
+  flags = [ "maintainer" "test-doctest" ];
 }
