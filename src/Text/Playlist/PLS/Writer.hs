@@ -20,7 +20,6 @@ module Text.Playlist.PLS.Writer
 --------------------------------------------------------------------------------
 import Data.ByteString.Lazy.Builder (Builder)
 import qualified Data.ByteString.Lazy.Builder as B
-import Data.Monoid
 import Data.Text.Encoding (encodeUtf8)
 import Text.Playlist.Types
 
@@ -67,4 +66,3 @@ writeLength (x, n) =
                B.charUtf8 '='        <>
                B.stringUtf8 (show l) <>
                B.charUtf8 '\n'
-

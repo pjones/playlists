@@ -18,7 +18,6 @@ module Text.Playlist.M3U.Writer (writePlaylist) where
 --------------------------------------------------------------------------------
 import Data.ByteString.Lazy.Builder (Builder)
 import qualified Data.ByteString.Lazy.Builder as B
-import Data.Monoid
 import Data.Text (Text)
 import Data.Text.Encoding (encodeUtf8)
 import Text.Playlist.Types
@@ -53,4 +52,3 @@ writeLength (Just l) = B.stringUtf8 (show l)
 writeTitle :: Maybe Text -> Builder
 writeTitle Nothing = mempty
 writeTitle (Just x) = B.byteString (encodeUtf8 x)
-
