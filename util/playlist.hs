@@ -13,12 +13,11 @@ the LICENSE file.
 module Main where
 
 --------------------------------------------------------------------------------
-import qualified Data.ByteString as BS
+import qualified Data.ByteString      as BS
 import qualified Data.ByteString.Lazy as BL
-import Data.Monoid
-import qualified Data.Text as T
-import Options.Applicative
-import Text.Playlist
+import qualified Data.Text            as T
+import           Options.Applicative
+import           Text.Playlist
 
 --------------------------------------------------------------------------------
 data Command = CmdURLs Format | CmdConvert Format Format

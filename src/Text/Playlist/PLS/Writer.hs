@@ -18,11 +18,10 @@ module Text.Playlist.PLS.Writer
        ) where
 
 --------------------------------------------------------------------------------
-import Data.ByteString.Lazy.Builder (Builder)
+import           Data.ByteString.Lazy.Builder (Builder)
 import qualified Data.ByteString.Lazy.Builder as B
-import Data.Monoid
-import Data.Text.Encoding (encodeUtf8)
-import Text.Playlist.Types
+import           Data.Text.Encoding           (encodeUtf8)
+import           Text.Playlist.Types
 
 --------------------------------------------------------------------------------
 writePlaylist :: Playlist -> Builder
