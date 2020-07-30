@@ -71,8 +71,8 @@ resolve :: forall m. (Monad m)
         -- ^ A fully resolved 'Playlist'.  (All tracks should be files
         -- and not links to other playlists.)
 resolve playlist download = do
-  newTracks <- go 10 (tracks playlist)
-  pure (playlist { playlistChunks = ChunkTrack <$> newTracks })
+  newTracks <- go 10 (playlistTracks playlist)
+  pure (playlist { playlistTracks = newTracks })
   where
   ----------------------------------------------------------------------------
   -- Recursively process tracks in the 'Playlist' with a maximum depth

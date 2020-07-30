@@ -13,8 +13,8 @@ the LICENSE file.
 module Text.Playlist
        ( -- * Playlist Types
          Track (..)
-       , tracks
-       , Playlist
+       , Tag(..)
+       , Playlist(..)
 
          -- * Playlist Formats
        , Format (..)

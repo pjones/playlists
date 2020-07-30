@@ -9,27 +9,28 @@ the LICENSE file.
 
 -}
 
-{-# LANGUAGE RecordWildCards #-}
+{-# LANGUAGE DerivingStrategies         #-}
+{-# LANGUAGE GeneralizedNewtypeDeriving #-}
+{-# LANGUAGE RecordWildCards            #-}
 
 --------------------------------------------------------------------------------
-module Text.Playlist.Types
-       ( Chunk(..)
-       , Track (..)
-       , Playlist(..)
-       , tracks
-       , Format (..)
-       ) where
+module Text.Playlist.Types where
 
 --------------------------------------------------------------------------------
-import           Data.Text (Text)
+import           Data.List   (find)
+import           Data.String (IsString)
+import           Data.Text   (Text)
 
---------------------------------------------------------------------------------
--- | Single playlist chunk. Could be either 'Track' or 'Text' with meta-information.
--- E.g. SCTE35.
-data Chunk
-  = ChunkTrack Track
-  | ChunkExtra Text
-  deriving (Show, Eq)
+newtype TagName = TagName { getTagName :: Text }
+  deriving newtype (Eq, Ord, Show, IsString)
+
+data Tag = Tag
+  { tagName  :: TagName
+  , tagValue :: Text
+  } deriving (Eq, Show)
+
+lookupTag :: TagName -> [Tag] -> Maybe Tag
+lookupTag name = find ((== name) . tagName)
 
 --------------------------------------------------------------------------------
 -- | A single music file or streaming URL.
@@ -37,20 +38,15 @@ data Track = Track
   { trackURL      :: Text        -- ^ URL for a file or streaming resource.
   , trackTitle    :: Maybe Text  -- ^ Optional title.
   , trackDuration :: Maybe Float -- ^ Optional duration in seconds.
-  , trackMeta     :: Maybe Text  -- ^ Optional extra tag info.
-  , trackTime     :: Maybe Text  -- ^ Optional program datetime.
+  , trackTags     :: [Tag]
   } deriving (Show, Eq)
 
 --------------------------------------------------------------------------------
 -- | A list of 'Track's.
 data Playlist = Playlist
-  { playlistChunks        :: [Chunk]    -- ^ Chunk list.
-  , playlistMediaSequence :: Maybe Text -- ^ Optional media sequence number (live).
-  }  deriving (Show, Eq)
-
--- | Obtain 'Track' list from 'Playlist'.
-tracks :: Playlist -> [Track]
-tracks Playlist{..} = [ track | ChunkTrack track <- playlistChunks ]
+  { playlistGlobalTags :: [Tag]     -- ^ Global playlist tags.
+  , playlistTracks     :: [Track]   -- ^ A list of tracks.
+  } deriving (Eq, Show)
 
 --------------------------------------------------------------------------------
 -- | Playlist formats.

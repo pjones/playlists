@@ -33,7 +33,7 @@ parsePlaylist = do
   parseHeader
   ts <- many1 parseTrack
   skipMany skipUnusedLine
-  return (Playlist (ChunkTrack <$> ts) Nothing)
+  return (Playlist [] ts)
 
 --------------------------------------------------------------------------------
 -- | A pls header will at least contain the "[playlist]" bit but some
@@ -58,7 +58,7 @@ parseTrack = do
   return Track { trackURL      = url
                , trackTitle    = title
                , trackDuration = mlen
-               , trackMeta     = Nothing -- SCTE tags are not expected in PLS playlist.
+               , trackTags     = []
                }
 
 --------------------------------------------------------------------------------

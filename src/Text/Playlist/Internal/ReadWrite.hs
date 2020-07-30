@@ -17,17 +17,17 @@ module Text.Playlist.Internal.ReadWrite
        ) where
 
 --------------------------------------------------------------------------------
-import qualified Data.Attoparsec.ByteString as Atto
-import Data.ByteString (ByteString)
-import qualified Data.ByteString.Lazy as BL
+import qualified Data.Attoparsec.ByteString   as Atto
+import           Data.ByteString              (ByteString)
+import qualified Data.ByteString.Lazy         as BL
 import qualified Data.ByteString.Lazy.Builder as BL
 
 --------------------------------------------------------------------------------
-import qualified Text.Playlist.M3U.Reader as M3U
-import qualified Text.Playlist.M3U.Writer as M3U
-import qualified Text.Playlist.PLS.Reader as PLS
-import qualified Text.Playlist.PLS.Writer as PLS
-import Text.Playlist.Types
+import qualified Text.Playlist.M3U.Reader     as M3U
+import qualified Text.Playlist.M3U.Writer     as M3U
+import qualified Text.Playlist.PLS.Reader     as PLS
+import qualified Text.Playlist.PLS.Writer     as PLS
+import           Text.Playlist.Types
 
 --------------------------------------------------------------------------------
 -- | Return the appropriate attoparsec parser for the given playlist format.

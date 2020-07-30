@@ -32,7 +32,7 @@ writePlaylist x =
   B.stringUtf8 (show . length $ ts)             <>
   B.byteString "\nVersion=2\n"
   where
-    ts = tracks x
+    ts = playlistTracks x
 
 --------------------------------------------------------------------------------
 writeTrack :: (Track, Int) -> Builder
