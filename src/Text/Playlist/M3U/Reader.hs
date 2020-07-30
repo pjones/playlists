@@ -83,8 +83,10 @@ trackParser = do
 --
 --       -- TODO: parse durationAndTitle
   trackURL <- parseURL
-  let trackTitle = Nothing
-      trackDuration = Nothing
+  let parsedEXTINF = parseEXTINF trackTags
+      trackDuration = fst <$> parsedEXTINF
+      trackTitle = snd <$> parsedEXTINF
+      trackDateTime = parseEXT_X_PROGRAM_DATETIME trackTags
   return Track{..}
 
 --------------------------------------------------------------------------------

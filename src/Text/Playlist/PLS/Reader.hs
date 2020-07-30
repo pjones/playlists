@@ -58,6 +58,7 @@ parseTrack = do
   return Track { trackURL      = url
                , trackTitle    = title
                , trackDuration = mlen
+               , trackDateTime = Nothing
                , trackTags     = []
                }
 

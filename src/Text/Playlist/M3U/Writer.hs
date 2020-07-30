@@ -26,7 +26,7 @@ writePlaylist :: Playlist -> Builder
 writePlaylist Playlist{..} = mconcat
   [ "#EXTM3U\n"
   , foldMap writeTag playlistGlobalTags
-  , foldMap writeTrack playlistTracks
+  , foldMap (writeTrack . trackRecoverTags) playlistTracks
   ]
 
 --------------------------------------------------------------------------------
