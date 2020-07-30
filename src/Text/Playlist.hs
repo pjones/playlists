@@ -13,6 +13,7 @@ the LICENSE file.
 module Text.Playlist
        ( -- * Playlist Types
          Track (..)
+       , tracks
        , Playlist
 
          -- * Playlist Formats
@@ -30,7 +31,7 @@ module Text.Playlist
        ) where
 
 --------------------------------------------------------------------------------
-import Text.Playlist.Internal.Format
-import Text.Playlist.Internal.ReadWrite
-import Text.Playlist.Types
-import Text.Playlist.Internal.Resolve
+import           Text.Playlist.Internal.Format
+import           Text.Playlist.Internal.ReadWrite
+import           Text.Playlist.Internal.Resolve
+import           Text.Playlist.Types

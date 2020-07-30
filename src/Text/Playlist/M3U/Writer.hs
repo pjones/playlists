@@ -24,7 +24,14 @@ import           Text.Playlist.Types
 
 --------------------------------------------------------------------------------
 writePlaylist :: Playlist -> Builder
-writePlaylist x = B.byteString "#EXTM3U\n" <> mconcat (map writeTrack x)
+writePlaylist x = B.byteString "#EXTM3U\n" <> mconcat (map writeChunk cs)
+  where
+    cs = playlistChunks x
+
+--------------------------------------------------------------------------------
+writeChunk :: Chunk -> Builder
+writeChunk (ChunkExtra x) = B.byteString (encodeUtf8 x)
+writeChunk (ChunkTrack x) = writeTrack x
 
 --------------------------------------------------------------------------------
 writeTrack :: Track -> Builder
@@ -35,7 +42,7 @@ writeTrack x =
 
 --------------------------------------------------------------------------------
 writeTitleAndLength :: Track -> Builder
-writeTitleAndLength (Track _ Nothing Nothing) = mempty
+writeTitleAndLength (Track _ Nothing Nothing Nothing Nothing) = mempty
 writeTitleAndLength Track{..} =
   B.byteString "#EXTINF:"   <>
   writeLength trackDuration <>

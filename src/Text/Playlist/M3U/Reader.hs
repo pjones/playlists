@@ -15,23 +15,44 @@ the LICENSE file.
 module Text.Playlist.M3U.Reader (parsePlaylist) where
 
 --------------------------------------------------------------------------------
-import Control.Applicative
-import Control.Monad (void)
-import Data.Attoparsec.ByteString
-import Data.Attoparsec.ByteString.Char8 (signed, double)
-import Data.Maybe (catMaybes)
-import Data.Text (Text)
-import Data.Text.Encoding (decodeUtf8)
-import Text.Playlist.Internal.Attoparsec
-import Text.Playlist.Types
+import           Control.Applicative
+import           Control.Monad                     (void)
+import           Data.Attoparsec.ByteString
+import           Data.Attoparsec.ByteString.Char8  (decimal, double, signed)
+import           Data.Maybe                        (catMaybes)
+import           Data.Text                         (Text)
+import           Data.Text.Encoding                (decodeUtf8)
+import           Text.Playlist.Internal.Attoparsec
+import           Text.Playlist.Types
+import           Text.Read                         (readMaybe)
 
 --------------------------------------------------------------------------------
+data Directive = TrackProgramDateTime | TrackDuration | Comment | Meta
+
 -- | Parser for a complete M3U playlist.
 parsePlaylist :: Parser Playlist
 parsePlaylist = do
-  ts <- many1 parseTrack
+  mmediaSequence' <- many' parseMediaSequence
+  let mmediaSequence = case catMaybes mmediaSequence' of
+        []    -> Nothing
+        x : _ -> pure x
+  cs <- many1 parseChunks
   void (many' commentOrDirective) -- Trailing comments.
-  return ts
+  return (Playlist cs mmediaSequence)
+
+parseMediaSequence :: Parser (Maybe Text)
+parseMediaSequence = do
+  skipSpace
+  skip (== 35) -- Comment character '#'
+  isSequence <- (string "EXT-X-MEDIA-SEQUENCE:" >> pure True) <|> pure False
+  if isSequence
+    then do
+      mtext <- Just . decodeUtf8 <$> takeWhile1 (not . isEOL)
+      pure mtext
+    else pure Nothing
+
+parseChunks :: Parser Chunk
+parseChunks = ChunkTrack <$> parseTrack
 
 --------------------------------------------------------------------------------
 -- | Parser for a single track in a M3U file.
@@ -43,6 +64,8 @@ parseTrack = do
   return Track { trackURL      = url
                , trackTitle    = title
                , trackDuration = len
+               , trackMeta     = Nothing
+               , trackTime     = Nothing
                }
     where
       maybeTitleAndLength lst =
@@ -66,7 +89,9 @@ commentOrDirective :: Parser (Maybe (Maybe Text, Maybe Float))
 commentOrDirective = do
   skipSpace
   skip (== 35) -- Comment character "#"
-  isDirective <- (string "EXTINF:" >> return True) <|> return False
+  isDirective <- (string "EXTINF:" >> return True)
+    <|> (string "EXT-X-PROGRAM-DATE-TIME:" >> return True)
+    <|> return False
   if isDirective then directive <|> comment else comment
     where
       comment   = skipLine >> return Nothing
