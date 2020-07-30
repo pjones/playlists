@@ -36,8 +36,8 @@ parsePlaylist = playlistParser
 
 playlistParser :: Parser Playlist
 playlistParser = do
-  "#EXTM3U" *> Atto8.skipSpace
-  playlistGlobalTags <- anyTags
+  optional ("#EXTM3U" *> Atto8.skipSpace)
+  playlistGlobalTags <- globalTags
   playlistTracks <- many trackParser
   return Playlist{..}
 
@@ -58,12 +58,16 @@ globalTags = tags isGlobal
       ]
 
 tagOrComment :: (Tag -> Bool) -> Parser (Maybe Tag)
-tagOrComment p = "#" *> (("EXT" *> fmap Just (tagParser p)) <|> comment)
+tagOrComment p = do
+  mTag <- "#" *> (("EXT" *> fmap Just tagParser) <|> comment)
+  unless (all p mTag) $
+    fail "Tag does not satisfy the predicate"
+  return mTag
   where
     comment = Atto.takeTill isEOL *> Atto8.skipSpace *> pure Nothing
 
-tagParser :: (Tag -> Bool) -> Parser Tag
-tagParser p = do
+tagParser :: Parser Tag
+tagParser = do
   -- #EXT
   tagStr <- decodeUtf8 <$> Atto.takeTill isEOL
   let (name, val) = Text.break (== ':') tagStr
@@ -71,17 +75,11 @@ tagParser p = do
       tagValue = Text.drop 1 val
       tag = Tag{..}
   Atto8.skipSpace
-  unless (p tag) $ fail "Tag does not satisfy the predicate"
   return tag
 
 trackParser :: Parser Track
 trackParser = do
   trackTags <- anyTags
---   case lookupTag "#EXTINF" trackTags of
---     Tag { tagValue = durationAndTitle } -> do
---       return
---
---       -- TODO: parse durationAndTitle
   trackURL <- parseURL
   let parsedEXTINF = parseEXTINF trackTags
       trackDuration = fst <$> parsedEXTINF

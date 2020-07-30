@@ -37,4 +37,4 @@ writeTrack Track{..} = mconcat
   ]
 
 writeTag :: Tag -> Builder
-writeTag Tag{..} = B.byteString (encodeUtf8 (getTagName tagName <> ":" <> tagValue))
+writeTag Tag{..} = B.byteString (encodeUtf8 (getTagName tagName <> ":" <> tagValue)) <> "\n"

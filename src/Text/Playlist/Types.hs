@@ -21,6 +21,7 @@ module Text.Playlist.Types where
 import qualified Data.Foldable            as F
 import           Data.List                (find)
 import           Data.Maybe               (catMaybes)
+import           Data.Ord                 (comparing)
 import           Data.String              (IsString)
 import           Data.Text                (Text)
 import qualified Data.Text                as Text
@@ -34,7 +35,7 @@ newtype TagName = TagName { getTagName :: Text }
 data Tag = Tag
   { tagName  :: TagName
   , tagValue :: Text
-  } deriving (Eq, Show)
+  } deriving (Eq, Ord, Show)
 
 lookupTag :: TagName -> [Tag] -> Maybe Tag
 lookupTag name = find ((== name) . tagName)
@@ -48,6 +49,11 @@ data Track = Track
   , trackDateTime :: Maybe ZonedTime
   , trackTags     :: [Tag]
   } deriving (Show)
+
+instance Eq Track where
+  t1 == t2 = comp t1 t2 == EQ
+    where
+      comp = comparing trackURL <> comparing trackTags
 
 trackParseTags :: Track -> Track
 trackParseTags track@Track{..} = track
@@ -108,7 +114,7 @@ trackRecoverTags track@Track{..} = track
 data Playlist = Playlist
   { playlistGlobalTags :: [Tag]     -- ^ Global playlist tags.
   , playlistTracks     :: [Track]   -- ^ A list of tracks.
-  } deriving (Show)
+  } deriving (Show, Eq)
 
 --------------------------------------------------------------------------------
 -- | Playlist formats.

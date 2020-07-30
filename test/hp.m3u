@@ -1,6 +1,6 @@
 #EXTM3U
-#EXTINF:-1,(#1 - Generique) HITPARTY HIT - Pas de pub Que du HIT - Only Hits
+#EXTINF:-1.0,(#1 - Generique) HITPARTY HIT - Pas de pub Que du HIT - Only Hits
 http://firewall.hitparty.net:443
-#EXTINF:-1,(#1 - Generique) HITPARTY HIT - Pas de pub Que du HIT - Only Hits
+#EXTINF:-1.0,(#1 - Generique) HITPARTY HIT - Pas de pub Que du HIT - Only Hits
 http://icecast.pulsradio.com:80/hitpartyHD.mp3.m3u
 
