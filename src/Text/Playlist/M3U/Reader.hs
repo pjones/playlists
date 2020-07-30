@@ -25,6 +25,7 @@ import qualified Data.Attoparsec.ByteString        as Atto
 import qualified Data.Attoparsec.ByteString.Char8  as Atto8
 import           Data.Char                         (ord)
 import           Data.Text                         (Text)
+import qualified Data.Text                         as Text
 import           Data.Text.Encoding                (decodeUtf8)
 import           Text.Playlist.Internal.Attoparsec
 import           Text.Playlist.Types
@@ -35,12 +36,12 @@ parsePlaylist = playlistParser
 playlistParser :: Parser Playlist
 playlistParser = do
   playlistGlobalTags <- globalTagsParser
-  playlistTracks <- Atto8.many1 trackParser
+  playlistTracks <- many trackParser
   return Playlist{..}
 
 globalTagsParser :: Parser [Tag]
 globalTagsParser = do
-  "#EXTM3U" *> Atto8.endOfLine
+  "#EXTM3U" *> Atto8.skipSpace
   skipComments
   -- TODO: collect MEDIA-SEQUENCE and other global
   return []
@@ -52,14 +53,15 @@ comment :: Parser ()
 comment = "#" *> notEXT
   where
     notEXT = ("EXT" *> fail "")
-         <|> (Atto.takeTill isEOL *> Atto8.endOfLine)
+         <|> (Atto.takeTill isEOL *> Atto8.skipSpace)
 
 tagParser :: Parser Tag
 tagParser = skipComments *> do
-  tagName <- TagName . decodeUtf8 <$> ("#EXT" *> Atto.takeTill (== ord8 ':'))
-  ":"
-  tagValue <- decodeUtf8 <$> Atto.takeTill isEOL
-  Atto8.endOfLine
+  tagStr <- decodeUtf8 <$> ("#EXT" *> Atto.takeTill isEOL)
+  let (name, val) = Text.break (== ':') tagStr
+      tagName = TagName ("#EXT" <> name)
+      tagValue = Text.drop 1 val
+  Atto8.skipSpace
   return Tag{..}
   where
     ord8 = fromIntegral . ord
@@ -79,5 +81,5 @@ trackParser = do
 -- | Parser for URL or file name in a M3U file.  The URL is the entire
 -- line so this parser extracts the entire line and decodes it.
 parseURL :: Parser Text
-parseURL = decodeUtf8 <$> Atto.takeTill isEOL <* Atto8.skipSpace
+parseURL = Text.pack <$> Atto8.many1 (Atto8.satisfy (not . Atto8.isEndOfLine . fromIntegral . ord)) <* Atto8.skipSpace
 
