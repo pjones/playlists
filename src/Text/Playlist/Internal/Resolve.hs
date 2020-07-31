@@ -1,5 +1,5 @@
-{-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE RecordWildCards     #-}
+{-# LANGUAGE ScopedTypeVariables #-}
 
 
 {-
@@ -19,19 +19,19 @@ module Text.Playlist.Internal.Resolve
        ) where
 
 --------------------------------------------------------------------------------
-import Control.Monad
-import Data.Text (Text)
-import qualified Data.Text as Text
+import           Control.Monad
+import           Data.Text                     (Text)
+import qualified Data.Text                     as Text
 
 --------------------------------------------------------------------------------
-import Text.Playlist.Internal.Format
-import Text.Playlist.Types
+import           Text.Playlist.Internal.Format
+import           Text.Playlist.Types
 
 --------------------------------------------------------------------------------
 -- Internal type to track when a playlist may need to be processed a
 -- another time.  (Such as when a remote playlist refers to other
 -- remote playlists.)
-data Resolution = Flat Playlist | Again Playlist
+data Resolution = Flat [Track] | Again [Track]
 
 --------------------------------------------------------------------------------
 -- | If the given 'Playlist' contains tracks that reference remote
@@ -60,7 +60,7 @@ resolve :: forall m. (Monad m)
         -- ^ A 'Playlist' that may contain references to other
         -- playlists.
 
-        -> (Text -> m Playlist)
+        -> (Text -> m [Track])
         -- ^ Downloading function.  This function should take a URL
         -- and return a parsed playlist.
         --
@@ -70,12 +70,14 @@ resolve :: forall m. (Monad m)
         -> m Playlist
         -- ^ A fully resolved 'Playlist'.  (All tracks should be files
         -- and not links to other playlists.)
-resolve playlist download = go 10 playlist where
-
+resolve playlist download = do
+  newTracks <- go 10 (playlistTracks playlist)
+  pure (playlist { playlistTracks = newTracks })
+  where
   ----------------------------------------------------------------------------
   -- Recursively process tracks in the 'Playlist' with a maximum depth
   -- of @n@.
-  go :: Int -> Playlist -> m Playlist
+  go :: Int -> [Track] -> m [Track]
   go _ [] = return []
   go 0 xs = return xs
   go n xs = fmap join $ forM xs $ \track -> do

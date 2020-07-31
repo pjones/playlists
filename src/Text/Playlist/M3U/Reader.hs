@@ -1,4 +1,6 @@
+{-# OPTIONS_GHC -fno-warn-unused-do-bind #-}
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE RecordWildCards   #-}
 
 {-
 
@@ -12,68 +14,84 @@ the LICENSE file.
 -}
 
 --------------------------------------------------------------------------------
-module Text.Playlist.M3U.Reader (parsePlaylist) where
+module Text.Playlist.M3U.Reader where
 
 --------------------------------------------------------------------------------
-import Control.Applicative
-import Control.Monad (void)
-import Data.Attoparsec.ByteString
-import Data.Attoparsec.ByteString.Char8 (signed, double)
-import Data.Maybe (catMaybes)
-import Data.Text (Text)
-import Data.Text.Encoding (decodeUtf8)
-import Text.Playlist.Internal.Attoparsec
-import Text.Playlist.Types
 
---------------------------------------------------------------------------------
--- | Parser for a complete M3U playlist.
+import           Control.Applicative
+import           Control.Monad                     (unless)
+import           Data.Attoparsec.ByteString        (Parser)
+import qualified Data.Attoparsec.ByteString        as Atto
+import qualified Data.Attoparsec.ByteString.Char8  as Atto8
+import           Data.Char                         (ord)
+import           Data.Maybe                        (catMaybes)
+import           Data.Text                         (Text)
+import qualified Data.Text                         as Text
+import           Data.Text.Encoding                (decodeUtf8)
+import           Text.Playlist.Internal.Attoparsec
+import           Text.Playlist.Types
+
 parsePlaylist :: Parser Playlist
-parsePlaylist = do
-  ts <- many1 parseTrack
-  void (many' commentOrDirective) -- Trailing comments.
-  return ts
+parsePlaylist = playlistParser
 
---------------------------------------------------------------------------------
--- | Parser for a single track in a M3U file.
-parseTrack :: Parser Track
-parseTrack = do
-  -- Get the length and title closest to the URL or Nothing.
-  (title, len) <- maybeTitleAndLength . reverse <$> (many' commentOrDirective)
-  url   <- parseURL
-  return Track { trackURL      = url
-               , trackTitle    = title
-               , trackDuration = len
-               }
-    where
-      maybeTitleAndLength lst =
-        case catMaybes lst of
-          []    -> (Nothing, Nothing)
-          x : _ -> x
+playlistParser :: Parser Playlist
+playlistParser = do
+  optional ("#EXTM3U" *> Atto8.skipSpace)
+  playlistGlobalTags <- globalTags
+  playlistTracks <- many trackParser
+  return Playlist{..}
+
+tags :: (Tag -> Bool) -> Parser [Tag]
+tags p = catMaybes <$> many (tagOrComment p)
+
+anyTags :: Parser [Tag]
+anyTags = tags (const True)
+
+globalTags :: Parser [Tag]
+globalTags = tags isGlobal
+  where
+    isGlobal Tag{..} = tagName `elem`
+      [ "#EXTM3U"
+      , "#EXT-X-VERSION"
+      , "#EXT-X-TARGETDURATION"
+      , "#EXT-X-MEDIA-SEQUENCE"
+      ]
+
+tagOrComment :: (Tag -> Bool) -> Parser (Maybe Tag)
+tagOrComment p = do
+  mTag <- "#" *> (("EXT" *> fmap Just tagParser) <|> comment)
+  unless (all p mTag) $
+    fail "Tag does not satisfy the predicate"
+  return mTag
+  where
+    comment = Atto.takeTill isEOL *> Atto8.skipSpace *> pure Nothing
+
+tagParser :: Parser Tag
+tagParser = do
+  -- #EXT
+  tagStr <- decodeUtf8 <$> Atto.takeTill isEOL
+  let (name, val) = Text.break (== ':') tagStr
+      tagName = TagName ("#EXT" <> name)
+      tagValue = Text.drop 1 val
+      tag = Tag{..}
+  Atto8.skipSpace
+  return tag
+
+trackParser :: Parser Track
+trackParser = do
+  trackTags <- anyTags
+  trackURL <- parseURL
+  let parsedEXTINF = parseEXTINF trackTags
+      trackDuration = fst <$> parsedEXTINF
+      trackTitle = snd <$> parsedEXTINF
+      trackDateTime = parseEXT_X_PROGRAM_DATETIME trackTags
+  return Track{..}
+
 --------------------------------------------------------------------------------
 -- | Parser for URL or file name in a M3U file.  The URL is the entire
 -- line so this parser extracts the entire line and decodes it.
+--
+-- IMPORTANT: parseURL does not accept an empty line
 parseURL :: Parser Text
-parseURL = decodeUtf8 <$> takeWhile1 (not . isEOL) <* skipSpace
-
---------------------------------------------------------------------------------
--- | Comment parser with a twist.  In the extended M3U format metadata
--- for a track can be placed in a comment that appears just before the
--- URL.  This parser succeeds if the current line is a comment, and
--- always skips over the entire comment.  If the comment represents an
--- EXTINF directive then that information will be returned in a @Just@.
--- If it's just a regular comment then @Nothing@ is returned.
-commentOrDirective :: Parser (Maybe (Maybe Text, Maybe Float))
-commentOrDirective = do
-  skipSpace
-  skip (== 35) -- Comment character "#"
-  isDirective <- (string "EXTINF:" >> return True) <|> return False
-  if isDirective then directive <|> comment else comment
-    where
-      comment   = skipLine >> return Nothing
-      directive = do
-        mlen <- (Just . realToFrac <$> signed double) <|> return Nothing -- Parse length.
-        skip (== 44)                                                     -- Skip comma.
-        mtext <- (Just . decodeUtf8 <$> takeWhile1 (not . isEOL)) <|> (return Nothing)
-        skipLine
-        return (Just (mtext, mlen))
+parseURL = Text.pack <$> Atto8.many1 (Atto8.satisfy (not . Atto8.isEndOfLine . fromIntegral . ord)) <* Atto8.skipSpace
 

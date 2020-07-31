@@ -15,16 +15,16 @@ the LICENSE file.
 module Text.Playlist.PLS.Reader (parsePlaylist) where
 
 --------------------------------------------------------------------------------
-import Control.Applicative
-import Control.Monad (void)
-import Data.Attoparsec.ByteString
-import Data.Attoparsec.ByteString.Char8 (signed, double)
-import Data.ByteString (ByteString)
-import Data.Text (Text)
-import Data.Text.Encoding (decodeUtf8)
-import Data.Word8 (isDigit)
-import Text.Playlist.Internal.Attoparsec
-import Text.Playlist.Types
+import           Control.Applicative
+import           Control.Monad                     (void)
+import           Data.Attoparsec.ByteString
+import           Data.Attoparsec.ByteString.Char8  (double, signed)
+import           Data.ByteString                   (ByteString)
+import           Data.Text                         (Text)
+import           Data.Text.Encoding                (decodeUtf8)
+import           Data.Word8                        (isDigit)
+import           Text.Playlist.Internal.Attoparsec
+import           Text.Playlist.Types
 
 --------------------------------------------------------------------------------
 -- | A parser that will process an entire playlist.
@@ -33,7 +33,7 @@ parsePlaylist = do
   parseHeader
   ts <- many1 parseTrack
   skipMany skipUnusedLine
-  return ts
+  return (Playlist [] ts)
 
 --------------------------------------------------------------------------------
 -- | A pls header will at least contain the "[playlist]" bit but some
@@ -58,6 +58,8 @@ parseTrack = do
   return Track { trackURL      = url
                , trackTitle    = title
                , trackDuration = mlen
+               , trackDateTime = Nothing
+               , trackTags     = []
                }
 
 --------------------------------------------------------------------------------

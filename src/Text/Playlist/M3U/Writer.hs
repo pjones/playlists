@@ -18,38 +18,23 @@ module Text.Playlist.M3U.Writer (writePlaylist) where
 --------------------------------------------------------------------------------
 import           Data.ByteString.Lazy.Builder (Builder)
 import qualified Data.ByteString.Lazy.Builder as B
-import           Data.Text                    (Text)
 import           Data.Text.Encoding           (encodeUtf8)
 import           Text.Playlist.Types
 
 --------------------------------------------------------------------------------
 writePlaylist :: Playlist -> Builder
-writePlaylist x = B.byteString "#EXTM3U\n" <> mconcat (map writeTrack x)
+writePlaylist Playlist{..} = mconcat
+  [ "#EXTM3U\n"
+  , foldMap writeTag playlistGlobalTags
+  , foldMap (writeTrack . trackRecoverTags) playlistTracks
+  ]
 
 --------------------------------------------------------------------------------
 writeTrack :: Track -> Builder
-writeTrack x =
-  writeTitleAndLength x <>
-  B.byteString (encodeUtf8 $ trackURL x) <>
-  B.charUtf8 '\n'
+writeTrack Track{..} = mconcat
+  [ foldMap writeTag trackTags
+  , B.byteString (encodeUtf8 trackURL) <> "\n"
+  ]
 
---------------------------------------------------------------------------------
-writeTitleAndLength :: Track -> Builder
-writeTitleAndLength (Track _ Nothing Nothing) = mempty
-writeTitleAndLength Track{..} =
-  B.byteString "#EXTINF:"   <>
-  writeLength trackDuration <>
-  B.byteString ","          <>
-  writeTitle trackTitle     <>
-  B.charUtf8 '\n'
-
---------------------------------------------------------------------------------
-writeLength :: Maybe Float -> Builder
-writeLength Nothing  = mempty
-writeLength (Just l) = B.stringUtf8 (show l)
-
---------------------------------------------------------------------------------
-writeTitle :: Maybe Text -> Builder
-writeTitle Nothing  = mempty
-writeTitle (Just x) = B.byteString (encodeUtf8 x)
-
+writeTag :: Tag -> Builder
+writeTag Tag{..} = B.byteString (encodeUtf8 (getTagName tagName <> ":" <> tagValue)) <> "\n"

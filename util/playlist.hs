@@ -56,7 +56,7 @@ writePlaylist fmt plst = BL.putStr $ generatePlaylist fmt plst
 
 --------------------------------------------------------------------------------
 dumpURLs :: Format -> IO ()
-dumpURLs fmt = mapM_ (putStrLn . T.unpack . trackURL) =<< readPlaylist fmt
+dumpURLs fmt = mapM_ (putStrLn . T.unpack . trackURL) . playlistTracks =<< readPlaylist fmt
 
 --------------------------------------------------------------------------------
 convertPlaylist :: Format -> Format -> IO ()

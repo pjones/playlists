@@ -9,27 +9,112 @@ the LICENSE file.
 
 -}
 
---------------------------------------------------------------------------------
-module Text.Playlist.Types
-       ( Track (..)
-       , Playlist
-       , Format (..)
-       ) where
+{-# LANGUAGE DerivingStrategies         #-}
+{-# LANGUAGE GeneralizedNewtypeDeriving #-}
+{-# LANGUAGE OverloadedStrings          #-}
+{-# LANGUAGE RecordWildCards            #-}
 
 --------------------------------------------------------------------------------
-import Data.Text (Text)
+module Text.Playlist.Types where
+
+--------------------------------------------------------------------------------
+import qualified Data.Foldable            as F
+import           Data.List                (find)
+import           Data.Maybe               (catMaybes)
+import           Data.Ord                 (comparing)
+import           Data.String              (IsString)
+import           Data.Text                (Text)
+import qualified Data.Text                as Text
+import           Data.Time
+import           Data.Time.Format.ISO8601
+import           Text.Read                (readMaybe)
+
+newtype TagName = TagName { getTagName :: Text }
+  deriving newtype (Eq, Ord, Show, IsString)
+
+data Tag = Tag
+  { tagName  :: TagName
+  , tagValue :: Text
+  } deriving (Eq, Ord, Show)
+
+lookupTag :: TagName -> [Tag] -> Maybe Tag
+lookupTag name = find ((== name) . tagName)
 
 --------------------------------------------------------------------------------
 -- | A single music file or streaming URL.
 data Track = Track
-  { trackURL      :: Text        -- ^ URL for a file or streaming resource.
-  , trackTitle    :: Maybe Text  -- ^ Optional title.
-  , trackDuration :: Maybe Float -- ^ Optional duration in seconds.
-  } deriving (Show, Eq)
+  { trackURL      :: Text           -- ^ URL for a file or streaming resource.
+  , trackTitle    :: Maybe Text     -- ^ Optional title.
+  , trackDuration :: Maybe Float    -- ^ Optional duration in seconds.
+  , trackDateTime :: Maybe ZonedTime
+  , trackTags     :: [Tag]
+  } deriving (Show)
+
+instance Eq Track where
+  t1 == t2 = comp t1 t2 == EQ
+    where
+      comp = comparing trackURL <> comparing trackTags
+
+trackParseTags :: Track -> Track
+trackParseTags track@Track{..} = track
+  { trackTitle    = parsedTitle
+  , trackDuration = parsedDuration
+  , trackDateTime = parseEXT_X_PROGRAM_DATETIME trackTags
+  }
+  where
+    (parsedDuration, parsedTitle) =
+      case parseEXTINF trackTags of
+        Nothing     -> (Nothing, Nothing)
+        Just (d, t) -> (Just d, if Text.null t then Nothing else Just t)
+
+parseEXT_X_PROGRAM_DATETIME :: [Tag] -> Maybe ZonedTime
+parseEXT_X_PROGRAM_DATETIME tags = do
+  Tag{..} <- lookupTag "#EXT-X-PROGRAM-DATETIME" tags
+  iso8601ParseM (Text.unpack tagValue)
+
+parseEXTINF :: [Tag] -> Maybe (Float, Text)
+parseEXTINF tags = do
+  Tag{..} <- lookupTag "#EXTINF" tags
+  let (before, after) = Text.break (== ',') tagValue
+      mDuration = readMaybe (Text.unpack before)
+      title = Text.drop 1 after
+  duration <- mDuration
+  return (duration, title)
+
+recoverEXTINF :: Maybe Float -> Maybe Text -> Maybe Tag
+recoverEXTINF mDuration mTitle = do
+  duration <- mDuration
+  return Tag
+    { tagName = "#EXTINF"
+    , tagValue = Text.pack (show duration) <> "," <> F.fold mTitle
+    }
+
+recoverEXT_X_PROGRAM_DATETIME :: ZonedTime -> Tag
+recoverEXT_X_PROGRAM_DATETIME zt = Tag
+  { tagName = "#EXT-X-PROGRAM-DATETIME"
+  , tagValue = Text.pack (iso8601Show zt)
+  }
+
+overrideTags :: [Tag] -> [Tag] -> [Tag]
+overrideTags old new = filter notInNew old <> new
+  where
+    notInNew tag = tagName tag `notElem` map tagName new
+
+trackRecoverTags :: Track -> Track
+trackRecoverTags track@Track{..} = track
+  { trackTags = overrideTags trackTags recoveredTags }
+  where
+    recoveredTags = catMaybes
+      [ recoverEXTINF trackDuration trackTitle
+      , recoverEXT_X_PROGRAM_DATETIME <$> trackDateTime
+      ]
 
 --------------------------------------------------------------------------------
 -- | A list of 'Track's.
-type Playlist = [Track]
+data Playlist = Playlist
+  { playlistGlobalTags :: [Tag]     -- ^ Global playlist tags.
+  , playlistTracks     :: [Track]   -- ^ A list of tracks.
+  } deriving (Show, Eq)
 
 --------------------------------------------------------------------------------
 -- | Playlist formats.

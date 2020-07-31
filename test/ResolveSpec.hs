@@ -15,14 +15,13 @@ the LICENSE file.
 module ResolveSpec (spec) where
 
 --------------------------------------------------------------------------------
-import Data.Text (Text)
-import qualified Data.Text as Text
-import Helper (playlistFromFile)
-import System.FilePath (dropExtension, takeFileName)
-import Test.Hspec
+import qualified Data.Text       as Text
+import           Helper          (playlistFromFile)
+import           System.FilePath (dropExtension, takeFileName)
+import           Test.Hspec
 
 --------------------------------------------------------------------------------
-import Text.Playlist
+import           Text.Playlist
 
 --------------------------------------------------------------------------------
 spec :: Spec
@@ -36,13 +35,13 @@ loadAndResolve format file = do
     playlist <- playlistFromFile format file
     resolve playlist download
   where
-    download :: Text -> IO Playlist
-    download = playlistFromFile format . dropExtension .
+    download = fmap playlistTracks . playlistFromFile format . dropExtension .
                takeFileName . Text.unpack
 
 --------------------------------------------------------------------------------
 resolved :: Playlist
-resolved = [ Track "http://foo.com"             Nothing Nothing
-           , Track "http://bar.com"             Nothing Nothing
-           , Track "http://foo.com/aa.baz.live" Nothing Nothing
-           ]
+resolved = Playlist []
+  [ Track "http://foo.com"             Nothing Nothing Nothing []
+  , Track "http://bar.com"             Nothing Nothing Nothing []
+  , Track "http://foo.com/aa.baz.live" Nothing Nothing Nothing []
+  ]
