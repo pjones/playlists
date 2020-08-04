@@ -70,7 +70,7 @@ trackParseTags track@Track{..} = track
 
 parseEXT_X_PROGRAM_DATETIME :: [Tag] -> Maybe ZonedTime
 parseEXT_X_PROGRAM_DATETIME tags = do
-  Tag{..} <- lookupTag "#EXT-X-PROGRAM-DATETIME" tags
+  Tag{..} <- lookupTag "#EXT-X-PROGRAM-DATE-TIME" tags
   iso8601ParseM (Text.unpack tagValue)
 
 parseEXTINF :: [Tag] -> Maybe (Float, Text)
@@ -92,7 +92,7 @@ recoverEXTINF mDuration mTitle = do
 
 recoverEXT_X_PROGRAM_DATETIME :: ZonedTime -> Tag
 recoverEXT_X_PROGRAM_DATETIME zt = Tag
-  { tagName = "#EXT-X-PROGRAM-DATETIME"
+  { tagName = "#EXT-X-PROGRAM-DATE-TIME"
   , tagValue = Text.pack (iso8601Show zt)
   }
 
