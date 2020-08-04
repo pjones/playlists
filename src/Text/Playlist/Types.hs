@@ -27,6 +27,7 @@ import           Data.Text                (Text)
 import qualified Data.Text                as Text
 import           Data.Time
 import           Data.Time.Format.ISO8601
+import           Data.Time.Lens
 import           Text.Read                (readMaybe)
 
 newtype TagName = TagName { getTagName :: Text }
@@ -116,8 +117,30 @@ data Playlist = Playlist
   , playlistTracks     :: [Track]   -- ^ A list of tracks.
   } deriving (Show, Eq)
 
+propagateDateTime :: Playlist -> Playlist
+propagateDateTime pl = pl { playlistTracks = newTracks }
+  where
+    newTracks = propagateDateTime' Nothing (playlistTracks pl)
+
+    propagateDateTime' _ [] = []
+    propagateDateTime' _ (track@Track{..} : tracks)
+      | Just datetime <- trackDateTime
+      = track
+        : propagateDateTime' (nextDateTime datetime <$> trackDuration) tracks
+        where
+          nextDateTime datetime dur = modL seconds (+ realToFrac dur) datetime
+    propagateDateTime' (Just datetime) (track@Track{..} : tracks)
+      | Nothing <- trackDateTime
+      = track { trackDateTime = Just datetime}
+        : propagateDateTime' (nextDateTime <$> trackDuration) tracks
+          where
+          nextDateTime dur = modL seconds (+ realToFrac dur) datetime
+    propagateDateTime' Nothing (track:tracks)
+      = track : propagateDateTime' Nothing tracks
+
+
 --------------------------------------------------------------------------------
--- | Playlist formats.
+  -- | Playlist formats.
 data Format = PLS               -- ^ <http://en.wikipedia.org/wiki/PLS_(file_format)>
             | M3U               -- ^ M3U and M3U8. <http://en.wikipedia.org/wiki/M3U>
               deriving (Read, Show, Eq)
