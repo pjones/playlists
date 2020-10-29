@@ -38,7 +38,7 @@ parsePlaylist = do
 parseTrack :: Parser Track
 parseTrack = do
   -- Get the length and title closest to the URL or Nothing.
-  (title, len) <- maybeTitleAndLength . reverse <$> (many' commentOrDirective)
+  (title, len) <- maybeTitleAndLength . reverse <$> many' commentOrDirective
   url   <- parseURL
   return Track { trackURL      = url
                , trackTitle    = title
@@ -73,7 +73,6 @@ commentOrDirective = do
       directive = do
         mlen <- (Just . realToFrac <$> signed double) <|> return Nothing -- Parse length.
         skip (== 44)                                                     -- Skip comma.
-        mtext <- (Just . decodeUtf8 <$> takeWhile1 (not . isEOL)) <|> (return Nothing)
+        mtext <- (Just . decodeUtf8 <$> takeWhile1 (not . isEOL)) <|> return Nothing
         skipLine
         return (Just (mtext, mlen))
-
