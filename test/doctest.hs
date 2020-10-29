@@ -9,28 +9,39 @@ the LICENSE file.
 
 -}
 
---------------------------------------------------------------------------------
 -- | Wrapper around doctest to make sure examples in the source code work.
 module Main (main) where
 
---------------------------------------------------------------------------------
-import Control.Applicative
 import System.Environment
 import Test.DocTest
 
---------------------------------------------------------------------------------
 -- Totally stupid right now.  Will search the directory later.
-files :: IO [String]
-files = fmap ("util/playlist.hs" :) files' where
-  files' = return ["src/Text/Playlist.hs"]
+--
+-- @
+--   $ find src -type f -name '*.hs'
+-- @
+files :: [String]
+files =
+  [ "util/playlist.hs",
+    "src/Text/Playlist.hs",
+    "src/Text/Playlist/M3U/Writer.hs",
+    "src/Text/Playlist/M3U/Reader.hs",
+    "src/Text/Playlist/PLS/Writer.hs",
+    "src/Text/Playlist/PLS/Reader.hs",
+    "src/Text/Playlist/Internal/ReadWrite.hs",
+    "src/Text/Playlist/Internal/Attoparsec.hs",
+    "src/Text/Playlist/Internal/Format.hs",
+    "src/Text/Playlist/Internal/Resolve.hs",
+    "src/Text/Playlist/Types.hs"
+  ]
 
---------------------------------------------------------------------------------
 -- | GHC flags needed by doctest.  Would be better to fetch these from
 -- cabal directly though.
 flags :: [String]
 flags = ["-isrc"]
 
---------------------------------------------------------------------------------
 -- | Check the docs.
 main :: IO ()
-main = doctest =<< (++) <$> getArgs <*> fmap (flags ++) files
+main = do
+  args <- getArgs
+  doctest (args <> flags <> files)
