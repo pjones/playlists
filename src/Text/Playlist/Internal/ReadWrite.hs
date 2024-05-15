@@ -20,7 +20,7 @@ module Text.Playlist.Internal.ReadWrite
 import qualified Data.Attoparsec.ByteString as Atto
 import Data.ByteString (ByteString)
 import qualified Data.ByteString.Lazy as BL
-import qualified Data.ByteString.Lazy.Builder as BL
+import qualified Data.ByteString.Builder as BL
 
 --------------------------------------------------------------------------------
 import qualified Text.Playlist.M3U.Reader as M3U

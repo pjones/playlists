@@ -49,7 +49,7 @@ parseHeader = do
 parseTrack :: Parser Track
 parseTrack = do
   (n, url) <- parseFileN
-  title    <- (Just <$> parseTitle n) <|> return Nothing
+  title    <- optional (parseTitle n)
 
   -- Parse track length.
   mlen <- (Just . realToFrac <$> (skipSpace >> string "Length" >> skipWhile isDigit >> string "=" >> signed double))

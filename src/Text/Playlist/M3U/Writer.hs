@@ -16,8 +16,8 @@ the LICENSE file.
 module Text.Playlist.M3U.Writer (writePlaylist) where
 
 --------------------------------------------------------------------------------
-import Data.ByteString.Lazy.Builder (Builder)
-import qualified Data.ByteString.Lazy.Builder as B
+import Data.ByteString.Builder (Builder)
+import qualified Data.ByteString.Builder as B
 import Data.Text (Text)
 import Data.Text.Encoding (encodeUtf8)
 import Text.Playlist.Types
