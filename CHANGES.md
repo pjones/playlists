@@ -10,6 +10,8 @@
 
     - 0.5.1 (October 29, 2020): Update dependencies
 
+    - 0.5.2 (May 15, 2024): Update dependencies
+
 ## 0.4 (November 21, 2016)
 
   * Added the `resolve` function.  If you have a playlist that
