@@ -1,6 +1,6 @@
 # Haskell Playlists Library and Tool
 
-[![CI](https://github.com/pjones/playlists/workflows/CI/badge.svg)](https://github.com/pjones/playlists/actions)
+[![tests](https://github.com/pjones/playlists/actions/workflows/tests.yml/badge.svg)](https://github.com/pjones/playlists/actions/workflows/tests.yml)
 [![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/pjones/playlists?label=release)](https://github.com/pjones/playlists/releases)
 [![Hackage](https://img.shields.io/hackage/v/playlists)](https://hackage.haskell.org/package/playlists)
 
