@@ -15,7 +15,7 @@ jobs:
         ghc: ["8.10", "9.4", "9.6", "9.8"]
     steps:
       - name: Clone Repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Setup Haskell
         id: setup-haskell-cabal
